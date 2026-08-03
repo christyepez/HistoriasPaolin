@@ -15,16 +15,15 @@ Construir una plataforma .NET 8 que genere, valide, ensamble y publique episodio
 - Máximo un episodio por ejecución.
 - No imitar franquicias, personajes, voces, canciones o marcas existentes.
 
-## Política obligatoria de despliegue local
-- Todo componente que necesite desplegarse debe ejecutarse en Docker Compose local.
-- No desplegar en Azure, AWS, Google Cloud, Kubernetes, servidores externos, hosting administrado ni servicios PaaS.
-- Los servicios API, Worker, PostgreSQL, pgAdmin y cualquier servicio auxiliar deben declararse en `docker-compose.yml` o archivos Compose complementarios.
-- Higgsfield, Seedance y YouTube se consumen como integraciones externas desde los contenedores; sus credenciales deben montarse mediante secretos o volúmenes locales y nunca incluirse en las imágenes.
-- Los Dockerfiles deben soportar compilación reproducible multi-stage y ejecución sin depender del SDK instalado en el host.
-- Usar healthchecks, redes privadas, volúmenes persistentes y dependencias condicionadas por salud.
-- Exponer únicamente los puertos necesarios hacia `localhost`.
-- Toda historia que agregue infraestructura debe actualizar Docker Compose, `.env.example`, documentación y pruebas de arranque.
-- La validación mínima de despliegue será: `docker compose config`, `docker compose build`, `docker compose up -d`, comprobación de healthchecks y `docker compose down`.
+## Regla de despliegue local
+- Todo componente desplegable debe ejecutarse mediante Docker Compose local.
+- Servicios mínimos en Compose: `api` y `worker`.
+- SQL Server no se levantará como contenedor porque se utilizará una instancia local ya existente.
+- Los contenedores accederán a SQL Server mediante `host.docker.internal` o el host configurable definido en `.env`.
+- No usar PostgreSQL, SQLite ni otra base para desarrollo o producción, excepto bases efímeras explícitas para pruebas unitarias aisladas.
+- La base de aplicación se llamará por defecto `HistoriasPaolinDb`.
+- La creación de la base y las migraciones deben ser idempotentes.
+- Las credenciales de SQL Server se proporcionarán únicamente mediante `.env`, variables de entorno o secretos locales fuera de Git.
 
 ## Flujo del agente orquestador
 1. Leer `docs/SPRINTS.md`.
@@ -39,9 +38,9 @@ Construir una plataforma .NET 8 que genere, valide, ensamble y publique episodio
 ## Definition of Done
 - Código compilable.
 - Pruebas unitarias y de integración relevantes.
-- Docker Compose local operativo para todo componente desplegable.
-- `docker compose config` y `docker compose build` sin errores.
-- Servicios levantados localmente con healthchecks saludables.
+- Docker Compose local operativo cuando aplique.
+- Conectividad validada contra la instancia SQL Server existente.
+- Base `HistoriasPaolinDb` creada y migrada de forma idempotente.
 - Documentación actualizada.
 - Sin secretos ni datos personales.
 - Logs estructurados.
