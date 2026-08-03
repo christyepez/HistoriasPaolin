@@ -20,6 +20,7 @@ Actúa como agente orquestador de HistoriasPaolin.
 11. No consumas créditos ni publiques contenido salvo que el sprint lo exija y exista aprobación explícita.
 12. Todo despliegue debe ejecutarse con Docker Compose local.
 13. Usa exclusivamente la instancia SQL Server existente y la base `HistoriasPaolinDb`; no agregues PostgreSQL ni un contenedor de base de datos.
+14. Antes de crear capacidades transversales, consulta PortalCorporativo y aplica REUSE/EXTEND/ADAPT/OWN.
 ```
 
 ## Sprint 0 — Bootstrap

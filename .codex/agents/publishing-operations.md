@@ -19,5 +19,6 @@ Implementar YouTube Data API, OAuth, programación, Worker recurrente, observabi
 - Distributed lock y recuperación tras reinicio.
 - Límites de costo, frecuencia y regeneraciones.
 - Healthchecks, métricas, tracing y alertas.
+- Auditoria y notificaciones transversales deben enviarse mediante adaptadores a PortalCorporativo, no implementarse como motores definitivos propios.
 - Docker Compose y scripts de Task Scheduler documentados.
 - CI debe compilar, probar y escanear sin usar credenciales productivas.

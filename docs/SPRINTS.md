@@ -20,6 +20,15 @@ Estados permitidos: `PENDIENTE`, `EN_PROGRESO`, `BLOQUEADO`, `TERMINADO`.
 
 **Aceptación:** build, test, compose config, conectividad SQL Server, creación de base y healthcheck exitosos.
 
+## Sprint 0A — Integración Portal Corporativo — EN_PROGRESO
+- HP-0A01 Inventariar capacidades y crear matriz REUSE/EXTEND/ADAPT/OWN.
+- HP-0A02 Integrar Gateway YARP y Security API sin crear otro Gateway.
+- HP-0A03 Registrar módulo, recursos, permisos, menú y configuración.
+- HP-0A04 Crear adaptadores para Audit, Notification y Outbox local.
+- HP-0A05 Levantar Docker Compose integrado y ejecutar smoke tests.
+
+**Aceptación:** HistoriasPaolin consume Portal por APIs/contratos, mantiene base propia, no duplica componentes transversales y documenta evidencias.
+
 ## Sprint 1 — Dominio y persistencia — PENDIENTE
 - HP-101 Modelar episodio, escenas, trabajos, activos y publicaciones.
 - HP-102 Implementar estados y transiciones.

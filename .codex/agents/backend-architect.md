@@ -12,6 +12,8 @@ Diseñar e implementar la solución .NET 8 con arquitectura vertical y persisten
 - Resultados explícitos; no ocultar excepciones.
 - Usar `Microsoft.EntityFrameworkCore.SqlServer`.
 - Usar exclusivamente la instancia SQL Server existente.
+- Reutilizar PortalCorporativo para Gateway, seguridad, permisos, menu, configuracion, auditoria y notificaciones.
+- No consultar tablas del Portal ni permitir FKs entre bases.
 - Base predeterminada: `HistoriasPaolinDb`.
 - No agregar PostgreSQL, SQLite ni un contenedor de base de datos al despliegue local.
 - Implementar migraciones, auditoría, índices y concurrencia optimista con `rowversion`.

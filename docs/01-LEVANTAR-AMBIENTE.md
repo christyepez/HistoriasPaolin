@@ -8,6 +8,8 @@
 - No se levantará PostgreSQL ni SQL Server dentro de Docker Compose.
 - La base nueva se llamará `HistoriasPaolinDb`.
 - La instancia, puerto, autenticación y credenciales se configuran fuera de Git.
+- PortalCorporativo debe levantarse como plataforma transversal; HistoriasPaolin consume `api-gateway`, `security-api`, `configuration-api`, `menu-api`, `audit-api` y `notification-api`.
+- Red integrada esperada: `portal-local-network`.
 
 Variables esperadas en `.env`:
 

@@ -17,7 +17,9 @@ Construir una plataforma .NET 8 que genere, valide, ensamble y publique episodio
 
 ## Regla de despliegue local
 - Todo componente desplegable debe ejecutarse mediante Docker Compose local.
-- Servicios mínimos en Compose: `api` y `worker`.
+- Servicios mínimos en Compose: `historiaspaolin-api`, `historiaspaolin-worker` y `historiaspaolin-migrations`.
+- HistoriasPaolin debe consumir capacidades transversales del PortalCorporativo; no duplicar Gateway, seguridad, usuarios, roles, permisos, menu, configuracion, auditoria ni notificaciones.
+- La integracion con PortalCorporativo se realiza por APIs, Gateway, contratos HTTP y eventos/outbox local; nunca por acceso directo a tablas.
 - SQL Server no se levantará como contenedor porque se utilizará una instancia local ya existente.
 - Los contenedores accederán a SQL Server mediante `host.docker.internal` o el host configurable definido en `.env`.
 - No usar PostgreSQL, SQLite ni otra base para desarrollo o producción, excepto bases efímeras explícitas para pruebas unitarias aisladas.
@@ -41,6 +43,7 @@ Construir una plataforma .NET 8 que genere, valide, ensamble y publique episodio
 - Docker Compose local operativo cuando aplique.
 - Conectividad validada contra la instancia SQL Server existente.
 - Base `HistoriasPaolinDb` creada y migrada de forma idempotente.
+- Matriz de reutilizacion PortalCorporativo actualizada cuando se agregue una capacidad transversal.
 - Documentación actualizada.
 - Sin secretos ni datos personales.
 - Logs estructurados.
