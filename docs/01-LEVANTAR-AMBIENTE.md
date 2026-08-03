@@ -1,5 +1,11 @@
 # Levantar ambiente desde cero
 
+## Regla general
+
+Todo componente desplegable debe ejecutarse exclusivamente en Docker Compose local. Primero se validará el flujo completo local: API, Worker, PostgreSQL, pgAdmin, FFmpeg, generación de recursos, ensamblaje, control de calidad y simulación de publicación. Solo después se integrará la cuenta real de YouTube mediante OAuth 2.0.
+
+No usar Azure, AWS, Google Cloud, Kubernetes, App Service, Cloud Run, servidores externos ni servicios PaaS para desplegar la aplicación.
+
 ## Prompt 1 — Diagnóstico y preparación
 
 ```text
@@ -55,30 +61,59 @@ Configura Higgsfield sin exponer credenciales.
 8. No generes contenido ni consumas créditos.
 ```
 
-## Prompt 4 — Configurar YouTube OAuth
+## Prompt 4 — Preparar YouTube sin publicar
 
 ```text
-Prepara la integración YouTube Data API v3.
+Prepara la integración futura con YouTube Data API v3, pero no conectes todavía la cuenta real ni subas videos.
 
 1. Crea `secrets/youtube/.gitkeep` y confirma que `secrets/` está ignorado.
-2. Crea `docs/integrations/youtube-oauth.md` con pasos para Google Cloud, OAuth Desktop y descarga de `client_secret.json`.
-3. Implementa un comando local de autenticación inicial que guarde el token fuera de Git.
-4. Valida scopes mínimos necesarios para subir, consultar y programar videos.
-5. La configuración predeterminada debe ser `private`, `MadeForKids=true` y `AutoPublishEnabled=false`.
-6. No realices una subida real.
+2. Crea `docs/integrations/youtube-oauth.md` con los pasos de Google Cloud, OAuth Desktop y descarga de `client_secret.json`.
+3. Implementa `IYouTubeUploader` y un adaptador `YouTubeDryRunUploader` que simule la publicación y guarde metadatos localmente.
+4. Configura por defecto `PublishingProvider=DryRun`, `InitialPrivacyStatus=private`, `MadeForKids=true` y `AutoPublishEnabled=false`.
+5. No solicitar credenciales reales en esta fase.
+6. No realizar una subida real.
 ```
 
-## Prompt 5 — Levantar Docker
+## Prompt 5 — Levantar Docker Compose local
 
 ```text
-Levanta el ambiente local completo.
+Levanta el ambiente local completo exclusivamente con Docker Compose.
 
-1. Implementa o valida Dockerfiles y `docker-compose.yml`.
+1. Implementa o valida Dockerfiles multi-stage y `docker-compose.yml`.
 2. Servicios mínimos: api, worker, postgres y pgadmin.
-3. Usa healthchecks y dependencias por condición saludable.
-4. Monta `production/`, `prompts/` y `secrets/` sin copiar secretos a imágenes.
-5. Ejecuta `docker compose config`, `docker compose build` y `docker compose up -d`.
-6. Ejecuta migraciones.
-7. Comprueba `/health`, Swagger y conexión a PostgreSQL.
-8. Guarda evidencias en `docs/environment-validation.md`.
+3. Incluye FFmpeg dentro de las imágenes que lo necesiten.
+4. Usa healthchecks y dependencias por condición saludable.
+5. Monta `production/`, `prompts/` y `secrets/` sin copiar secretos a imágenes.
+6. Exponer únicamente puertos locales necesarios.
+7. Ejecuta `docker compose config`, `docker compose build` y `docker compose up -d`.
+8. Ejecuta migraciones desde un contenedor o desde el arranque controlado de la API.
+9. Comprueba `/health`, Swagger y conexión a PostgreSQL.
+10. Ejecuta un episodio en modo dry-run sin consumir créditos ni publicar.
+11. Guarda evidencias en `docs/environment-validation.md`.
+```
+
+## Prompt 6 — Integrar la cuenta real de YouTube después del piloto local
+
+```text
+Integra la cuenta real de YouTube únicamente después de que el pipeline local haya sido aprobado.
+
+Precondiciones obligatorias:
+- Docker Compose local saludable.
+- Episodio piloto generado y validado.
+- Ensamblaje final correcto.
+- Miniatura y subtítulos disponibles.
+- Control de calidad aprobado con al menos 85/100.
+- Dry-run de publicación exitoso.
+
+Implementación:
+1. Configura un proyecto de Google Cloud con YouTube Data API v3.
+2. Usa OAuth 2.0 de aplicación de escritorio.
+3. Monta `client_secret.json` en el contenedor Worker mediante `./secrets/youtube:/app/secrets/youtube:ro`.
+4. Implementa un comando local interactivo para autorizar la cuenta y persistir el token en un volumen local ignorado por Git.
+5. Verifica que el canal autorizado sea `Historias de Paolín` antes de subir.
+6. Cambia `PublishingProvider` de `DryRun` a `YouTube` solo mediante variable de entorno.
+7. Realiza la primera subida como `private`.
+8. No publiques automáticamente.
+9. Requiere aprobación manual para programar o hacer público el video.
+10. Registra videoId, canal, fecha, estado y respuesta de la API sin registrar tokens.
 ```
