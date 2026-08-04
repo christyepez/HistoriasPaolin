@@ -14,3 +14,13 @@
 12. Restauracion: use `RESTORE DATABASE` solo sobre bases locales revisadas.
 13. Healthcheck: `GET /health/ready` debe ser healthy cuando SQL Server este disponible.
 14. Ambiente completo: levantar PortalCorporativo, completar `.env`, ejecutar `docker compose up -d`.
+
+## Validacion local 2026-08-03
+
+- Puerto host usado: `14333`.
+- Desde Windows se valido con `localhost,14333`.
+- Desde contenedores se valido con `host.docker.internal,14333`.
+- Base creada: `HistoriasPaolinDb`.
+- Login dedicado: `historiaspaolin_app`.
+- Migracion aplicada: `20260803220000_InitialSqlServerSchema`.
+- No se documento ningun secreto.

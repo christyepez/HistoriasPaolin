@@ -32,3 +32,5 @@ docker compose config
 ```
 
 Copie `.env.example` a `.env` y complete valores locales antes de usar SQL Server o Docker Compose. La API expone `/health`, `/health/live`, `/health/ready` y Swagger en Development.
+
+Validacion local registrada en `docs/environment-validation.md` y `docs/portal-integration-validation.md`.

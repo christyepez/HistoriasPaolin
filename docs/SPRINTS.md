@@ -29,6 +29,8 @@ Estados permitidos: `PENDIENTE`, `EN_PROGRESO`, `BLOQUEADO`, `TERMINADO`.
 
 **Aceptación:** HistoriasPaolin consume Portal por APIs/contratos, mantiene base propia, no duplica componentes transversales y documenta evidencias.
 
+**Evidencia local parcial 2026-08-03:** SQL Server compartido validado en puerto host `14333`, `HistoriasPaolinDb` creada, migracion inicial aplicada, API y Worker healthy. Smoke completo de Gateway/Menu/Configuration/Audit/Notification queda pendiente de ruta YARP o compose integrado del Portal.
+
 ## Sprint 1 — Dominio y persistencia — PENDIENTE
 - HP-101 Modelar episodio, escenas, trabajos, activos y publicaciones.
 - HP-102 Implementar estados y transiciones.
