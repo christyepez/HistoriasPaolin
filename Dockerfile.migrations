@@ -4,4 +4,4 @@ COPY . .
 RUN dotnet restore HistoriasPaolin.sln
 RUN dotnet tool install --global dotnet-ef --version 8.0.0
 ENV PATH="${PATH}:/root/.dotnet/tools"
-ENTRYPOINT ["pwsh", "-NoLogo", "-NoProfile", "-File", "scripts/apply-migrations.ps1"]
+ENTRYPOINT ["dotnet", "ef", "database", "update", "--project", "src/HistoriasPaolin.Infrastructure/HistoriasPaolin.Infrastructure.csproj", "--startup-project", "src/HistoriasPaolin.Api/HistoriasPaolin.Api.csproj"]
