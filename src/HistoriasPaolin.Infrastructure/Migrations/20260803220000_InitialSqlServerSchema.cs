@@ -1,10 +1,14 @@
 using System;
+using HistoriasPaolin.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace HistoriasPaolin.Infrastructure.Migrations;
 
+[DbContext(typeof(HistoriasPaolinDbContext))]
+[Migration("20260803220000_InitialSqlServerSchema")]
 public partial class InitialSqlServerSchema : Migration
 {
     protected override void Up(MigrationBuilder migrationBuilder)
