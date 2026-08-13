@@ -13,6 +13,14 @@ namespace HistoriasPaolin.Api.Controllers;
 [Route("api/historiaspaolin/episodes")]
 public sealed class EpisodesController(IEpisodeRepository repository, HistoriasPaolinDbContext dbContext) : ControllerBase
 {
+    [HttpGet]
+    [Authorize(Policy = "historiaspaolin.episodes.view")]
+    public async Task<ActionResult<IReadOnlyList<EpisodeResponse>>> List(CancellationToken cancellationToken)
+    {
+        var episodes = await repository.ListAsync(20, cancellationToken);
+        return Ok(episodes.Select(episode => new EpisodeResponse(episode.Id, episode.Title, episode.Status, episode.EstimatedCostUsd)));
+    }
+
     [HttpGet("{id:guid}")]
     [Authorize(Policy = "historiaspaolin.episodes.view")]
     public async Task<ActionResult<EpisodeResponse>> Get(Guid id, CancellationToken cancellationToken)

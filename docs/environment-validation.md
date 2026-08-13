@@ -53,6 +53,7 @@ Fecha local: 2026-08-13.
 - `dotnet test HistoriasPaolin.sln --no-build`: OK, 8 pruebas aprobadas.
 - `dotnet test HistoriasPaolin.sln --no-build --filter RequiresSqlServer`: OK sin ejecucion de casos porque no hay pruebas etiquetadas con `RequiresSqlServer`.
 - Prueba SQL real desde contenedor temporal: OK con `host.docker.internal:14333`, base `HistoriasPaolinDb` y usuario `historiaspaolin_app`.
+- Smoke integrado Portal Gateway -> HistoriasPaolin: OK, `PASS=7 FAIL=0 SKIP=0`.
 
 ## Seguridad
 

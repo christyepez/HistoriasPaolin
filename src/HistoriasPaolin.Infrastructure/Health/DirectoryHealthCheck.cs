@@ -9,7 +9,7 @@ public sealed class DirectoryHealthCheck(string path) : IHealthCheck
         try
         {
             Directory.CreateDirectory(path);
-            var probe = Path.Combine(path, ".healthcheck");
+            var probe = Path.Combine(path, $".healthcheck-{Guid.NewGuid():N}");
             File.WriteAllText(probe, DateTimeOffset.UtcNow.ToString("O"));
             File.Delete(probe);
             return Task.FromResult(HealthCheckResult.Healthy($"Directory is writable: {path}"));

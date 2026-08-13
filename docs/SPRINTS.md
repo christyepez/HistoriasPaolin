@@ -29,7 +29,7 @@ Estados permitidos: `PENDIENTE`, `EN_PROGRESO`, `BLOQUEADO`, `TERMINADO`.
 
 **Aceptación:** HistoriasPaolin consume Portal por APIs/contratos, mantiene base propia, no duplica componentes transversales y documenta evidencias.
 
-**Evidencia local 2026-08-13:** SQL Server compartido validado en puerto host `14333`, `HistoriasPaolinDb` creada, migracion inicial aplicada, API y Worker healthy, y `/health`, `/health/live`, `/health/ready` en `200 Healthy`. Smoke base de PortalCorporativo validado; smoke completo Gateway -> HistoriasPaolin.Api queda pendiente de ruta YARP `/api/historiaspaolin/**` o compose integrado del Portal.
+**Evidencia local 2026-08-13:** SQL Server compartido validado en puerto host `14333`, `HistoriasPaolinDb` creada, migracion inicial aplicada, API y Worker healthy, y `/health`, `/health/live`, `/health/ready` en `200 Healthy`. Portal Gateway enruta `/api/historiaspaolin/**` hacia `historiaspaolin-api:8080` en `portal-local-network`; smoke integrado Gateway -> HistoriasPaolin.Api validado con `PASS=7 FAIL=0 SKIP=0`.
 
 ## Sprint 1 — Dominio y persistencia — PENDIENTE
 - HP-101 Modelar episodio, escenas, trabajos, activos y publicaciones.
