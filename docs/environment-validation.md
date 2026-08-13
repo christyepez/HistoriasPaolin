@@ -1,6 +1,6 @@
 # Validacion local del ambiente
 
-Fecha local: 2026-08-03.
+Fecha local: 2026-08-13.
 
 ## SQL Server
 
@@ -32,7 +32,7 @@ Fecha local: 2026-08-03.
 - Contenedor SQL Server reutilizado: existente y `healthy`.
 - Docker desde Windows hacia SQL: OK con `localhost:14333`.
 - Docker desde contenedor temporal hacia SQL: OK con `host.docker.internal:14333`.
-- `docker compose config`: OK. No registrar su salida completa porque expande variables locales.
+- `docker compose config --quiet`: OK. No registrar la salida completa de `docker compose config` porque expande variables locales.
 - `docker compose build`: OK.
 - `docker compose up -d`: OK.
 - `historiaspaolin-migrations`: finalizo correctamente.
@@ -42,8 +42,8 @@ Fecha local: 2026-08-03.
 ## Healthchecks
 
 - `GET http://localhost:5080/health/ready`: `200 Healthy`.
-- `GET http://localhost:5080/health`: `200 Degraded` por checks opcionales de herramientas CLI.
-- `GET http://localhost:5080/health/live`: `200 Degraded` por checks opcionales de herramientas CLI.
+- `GET http://localhost:5080/health`: `200 Healthy`.
+- `GET http://localhost:5080/health/live`: `200 Healthy`.
 - Swagger: `http://localhost:5080/swagger/index.html` responde `200`.
 
 ## Build y pruebas
@@ -51,12 +51,15 @@ Fecha local: 2026-08-03.
 - `dotnet restore HistoriasPaolin.sln`: OK.
 - `dotnet build HistoriasPaolin.sln --no-restore`: OK, 0 warnings, 0 errores en ejecucion secuencial final.
 - `dotnet test HistoriasPaolin.sln --no-build`: OK, 8 pruebas aprobadas.
+- `dotnet test HistoriasPaolin.sln --no-build --filter RequiresSqlServer`: OK sin ejecucion de casos porque no hay pruebas etiquetadas con `RequiresSqlServer`.
+- Prueba SQL real desde contenedor temporal: OK con `host.docker.internal:14333`, base `HistoriasPaolinDb` y usuario `historiaspaolin_app`.
 
 ## Seguridad
 
 - `.env` de HistoriasPaolin y PortalCorporativo estan ignorados por Git.
 - No se versionaron secretos reales.
 - `git grep` solo encontro placeholders o nombres de variables para `SQLSERVER_PASSWORD` y `JWT_SECRET`.
+- La clave local de `historiaspaolin_app` se genero sin `$` para evitar interpolacion accidental en Docker Compose.
 - No se uso Higgsfield.
 - No se genero video.
 - No se conecto YouTube.

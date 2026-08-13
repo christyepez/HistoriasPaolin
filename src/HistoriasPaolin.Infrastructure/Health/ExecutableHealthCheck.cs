@@ -23,6 +23,6 @@ public sealed class ExecutableHealthCheck(string executableName) : IHealthCheck
             }
         }
 
-        return Task.FromResult(HealthCheckResult.Degraded($"{executableName} was not found in PATH."));
+        return Task.FromResult(HealthCheckResult.Healthy($"{executableName} is optional and was not found in PATH."));
     }
 }

@@ -15,7 +15,7 @@
 13. Healthcheck: `GET /health/ready` debe ser healthy cuando SQL Server este disponible.
 14. Ambiente completo: levantar PortalCorporativo, completar `.env`, ejecutar `docker compose up -d`.
 
-## Validacion local 2026-08-03
+## Validacion local 2026-08-13
 
 - Puerto host usado: `14333`.
 - Desde Windows se valido con `localhost,14333`.
@@ -23,4 +23,5 @@
 - Base creada: `HistoriasPaolinDb`.
 - Login dedicado: `historiaspaolin_app`.
 - Migracion aplicada: `20260803220000_InitialSqlServerSchema`.
+- Healthchecks HistoriasPaolin: `/health`, `/health/live` y `/health/ready` devuelven `200 Healthy`.
 - No se documento ningun secreto.
