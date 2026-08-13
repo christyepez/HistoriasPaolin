@@ -8,14 +8,17 @@ Implementa <TASK_ID> usando codex/PROMPTS.md.
 Lee en orden:
 1. AGENTS.md
 2. codex/IMPLEMENTATION_STATUS.md
-3. docs/SPRINTS.md
-4. codex/AGENT_MATRIX.md
-5. codex/SKILL_STRATEGY.md
+3. codex/TASK_EXECUTION_ORDER.md
+4. codex/ROADMAP.md solo la fila de <TASK_ID> y dependencias directas
+5. codex/FIRST_TASK.md si <TASK_ID> coincide
+6. codex/AGENT_MATRIX.md solo el agente seleccionado
+7. codex/SKILL_STRATEGY.md solo la skill seleccionada
 
-Selecciona un agente principal y maximo un revisor.
-No leas archivos fuera de FilesAllowed de la tarea sin justificar.
-Clasifica Portal capability antes de crear componentes transversales.
-Ejecuta validaciones aplicables y actualiza evidencia compacta.
+Resuelve automaticamente agente, skill, budget, FilesAllowed, FilesForbidden, Portal capability y validaciones desde ROADMAP/FIRST_TASK.
+Usa un agente principal y maximo un revisor.
+No leas archivos fuera de FilesAllowed sin justificar.
+No ejecutes proveedores pagos, IdP productivo ni Angular Shell salvo que la tarea lo permita explicitamente.
+Ejecuta las validaciones de la tarea y actualiza evidencia compacta.
 ```
 
 ## Fix
