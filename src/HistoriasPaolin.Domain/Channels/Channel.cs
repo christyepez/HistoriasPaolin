@@ -16,6 +16,7 @@ public sealed class Channel : AuditableEntity
     public int DefaultVideoDurationSeconds { get; set; } = 180;
     public string DefaultPublicationPrivacy { get; set; } = ChannelPublicationPrivacy.Private;
     public ICollection<ChannelBrand> Brands { get; set; } = new List<ChannelBrand>();
+    public ICollection<EditorialStrategy> EditorialStrategies { get; set; } = new List<EditorialStrategy>();
 
     public ChannelBrand? ActiveBrand => Brands.SingleOrDefault(brand => brand.IsActive);
 
@@ -40,4 +41,7 @@ public sealed class Channel : AuditableEntity
             Brands.Add(brand);
         }
     }
+
+    public bool HasActiveEditorialStrategy(Guid? exceptId = null) =>
+        EditorialStrategies.Any(strategy => strategy.IsActive && (!exceptId.HasValue || strategy.Id != exceptId.Value));
 }

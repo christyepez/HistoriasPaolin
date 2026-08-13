@@ -3,8 +3,8 @@
 | Order | TaskId | Status | Dependency | Reason |
 |---:|---|---|---|---|
 | 1 | HP-101 | DONE | HP-006, HP-0A02 | Channel Management implemented |
-| 2 | HP-102 | READY | HP-101 | Adds lifecycle rules after persistence surface exists |
-| 3 | HP-103 | READY | HP-101 | Completes EF mapping/migration for channels |
+| 2 | HP-102 | DONE | HP-101 | Editorial Strategy implemented |
+| 3 | HP-103 | READY | HP-102 | Completes EF mapping/migration for editorial configuration |
 | 4 | HP-104 | READY | HP-103 | Adds concurrency/audit fields |
 | 5 | HP-105 | READY | HP-104 | Closes Sprint 1 with tests |
 | 6 | HP-201 | BLOCKED | HP-105 | SeriesBible depends on channels |

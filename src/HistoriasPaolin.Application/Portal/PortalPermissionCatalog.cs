@@ -15,6 +15,7 @@ public static class PortalPermissionCatalog
     [
         "historiaspaolin.dashboard",
         "historiaspaolin.channels",
+        "historiaspaolin.editorial",
         "historiaspaolin.episodes",
         "historiaspaolin.scenes",
         "historiaspaolin.characters",
@@ -31,6 +32,7 @@ public static class PortalPermissionCatalog
     [
         "view",
         "manage",
+        "activate",
         "create",
         "update",
         "delete",

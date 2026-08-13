@@ -34,7 +34,7 @@ Status values: DONE, PARTIAL, READY, BLOCKED, DEFERRED, NOT_REQUIRED.
 | HP-0A04 | 0 | PARTIAL | HP-0A02 | HP-604,HP-605 | Backend Architect | audit-notify | Audit,Notification | M | Adapter decision documented; full adapters pending |
 | HP-0A05 | 0 | DONE | HP-0A02 | HP-101 | Sprint Orchestrator | integrated-smoke | all | M | Integrated smoke PASS 7/0/0 |
 | HP-101 | 1 | DONE | HP-006,HP-0A02 | HP-102,HP-201 | Backend Architect | channel-strategy | Configuration | M | Channel CRUD persists in HistoriasPaolinDb |
-| HP-102 | 1 | READY | HP-101 | HP-103 | ChannelStrategyAgent | channel-strategy | Configuration | S | Channel lifecycle/status rules enforced |
+| HP-102 | 1 | DONE | HP-101 | HP-103 | ChannelStrategyAgent | channel-strategy | Configuration | S | Editorial strategy persists and governs channel content rules |
 | HP-103 | 1 | READY | HP-101 | HP-104 | Backend Architect | sqlserver | none | M | Channel EF mapping/migration/indexes |
 | HP-104 | 1 | READY | HP-103 | HP-105 | Backend Architect | persistence | Audit future | M | Concurrency and audit fields defined |
 | HP-105 | 1 | READY | HP-104 | HP-201 | Backend Architect | testing | none | M | Channel tests cover domain/API/persistence |

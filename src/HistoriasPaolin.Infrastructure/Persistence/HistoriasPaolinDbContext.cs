@@ -12,6 +12,10 @@ public sealed class HistoriasPaolinDbContext(DbContextOptions<HistoriasPaolinDbC
     public DbSet<EpisodeScene> EpisodeScenes => Set<EpisodeScene>();
     public DbSet<Channel> Channels => Set<Channel>();
     public DbSet<ChannelBrand> ChannelBrands => Set<ChannelBrand>();
+    public DbSet<EditorialStrategy> EditorialStrategies => Set<EditorialStrategy>();
+    public DbSet<EditorialPillar> EditorialPillars => Set<EditorialPillar>();
+    public DbSet<EditorialTopic> EditorialTopics => Set<EditorialTopic>();
+    public DbSet<EditorialRestriction> EditorialRestrictions => Set<EditorialRestriction>();
     public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -105,6 +109,83 @@ public sealed class HistoriasPaolinDbContext(DbContextOptions<HistoriasPaolinDbC
                 .HasForeignKey(x => x.ChannelId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_ChannelBrands_Channels_ChannelId");
+        });
+
+        modelBuilder.Entity<EditorialStrategy>(entity =>
+        {
+            entity.ToTable("EditorialStrategies");
+            ConfigureAuditableEntity(entity);
+            entity.Property(x => x.ChannelId).IsRequired();
+            entity.Property(x => x.Name).HasMaxLength(200).IsRequired();
+            entity.Property(x => x.Description).HasMaxLength(1000).IsRequired();
+            entity.Property(x => x.Objective).HasMaxLength(2000).IsRequired();
+            entity.Property(x => x.PrimaryAudience).HasMaxLength(1000).IsRequired();
+            entity.Property(x => x.PrimaryLanguage).HasMaxLength(12).IsRequired();
+            entity.Property(x => x.SecondaryLanguage).HasMaxLength(12).IsRequired();
+            entity.Property(x => x.Country).HasMaxLength(12).IsRequired();
+            entity.Property(x => x.Tone).HasMaxLength(1000).IsRequired();
+            entity.Property(x => x.EducationalApproach).HasMaxLength(2000).IsRequired();
+            entity.Property(x => x.ContentStyle).HasMaxLength(2000).IsRequired();
+            entity.Property(x => x.StorytellingStyle).HasMaxLength(2000).IsRequired();
+            entity.HasIndex(x => x.ChannelId).HasDatabaseName("IX_EditorialStrategies_ChannelId");
+            entity.HasIndex(x => x.IsActive).HasDatabaseName("IX_EditorialStrategies_IsActive");
+            entity.HasIndex(x => x.EffectiveFromUtc).HasDatabaseName("IX_EditorialStrategies_EffectiveFromUtc");
+            entity.HasIndex(x => new { x.ChannelId, x.IsActive })
+                .IsUnique()
+                .HasFilter("[IsActive] = 1")
+                .HasDatabaseName("UX_EditorialStrategies_ChannelId_IsActive");
+            entity.HasOne(x => x.Channel)
+                .WithMany(x => x.EditorialStrategies)
+                .HasForeignKey(x => x.ChannelId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_EditorialStrategies_Channels_ChannelId");
+        });
+
+        modelBuilder.Entity<EditorialPillar>(entity =>
+        {
+            entity.ToTable("EditorialPillars");
+            ConfigureAuditableEntity(entity);
+            entity.Property(x => x.Code).HasMaxLength(100).IsRequired();
+            entity.Property(x => x.Name).HasMaxLength(200).IsRequired();
+            entity.Property(x => x.Description).HasMaxLength(1000).IsRequired();
+            entity.HasIndex(x => new { x.EditorialStrategyId, x.Code }).IsUnique().HasDatabaseName("UX_EditorialPillars_StrategyId_Code");
+            entity.HasOne(x => x.EditorialStrategy)
+                .WithMany(x => x.Pillars)
+                .HasForeignKey(x => x.EditorialStrategyId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_EditorialPillars_EditorialStrategies_EditorialStrategyId");
+        });
+
+        modelBuilder.Entity<EditorialTopic>(entity =>
+        {
+            entity.ToTable("EditorialTopics");
+            ConfigureAuditableEntity(entity);
+            entity.Property(x => x.Code).HasMaxLength(100).IsRequired();
+            entity.Property(x => x.Name).HasMaxLength(200).IsRequired();
+            entity.Property(x => x.Description).HasMaxLength(1000).IsRequired();
+            entity.Property(x => x.Category).HasMaxLength(120).IsRequired();
+            entity.HasIndex(x => new { x.EditorialStrategyId, x.Code }).IsUnique().HasDatabaseName("UX_EditorialTopics_StrategyId_Code");
+            entity.HasOne(x => x.EditorialStrategy)
+                .WithMany(x => x.Topics)
+                .HasForeignKey(x => x.EditorialStrategyId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_EditorialTopics_EditorialStrategies_EditorialStrategyId");
+        });
+
+        modelBuilder.Entity<EditorialRestriction>(entity =>
+        {
+            entity.ToTable("EditorialRestrictions");
+            ConfigureAuditableEntity(entity);
+            entity.Property(x => x.RestrictionType).HasMaxLength(120).IsRequired();
+            entity.Property(x => x.Code).HasMaxLength(100).IsRequired();
+            entity.Property(x => x.Description).HasMaxLength(1000).IsRequired();
+            entity.Property(x => x.Severity).HasMaxLength(40).IsRequired();
+            entity.HasIndex(x => new { x.EditorialStrategyId, x.Code }).HasDatabaseName("IX_EditorialRestrictions_StrategyId_Code");
+            entity.HasOne(x => x.EditorialStrategy)
+                .WithMany(x => x.Restrictions)
+                .HasForeignKey(x => x.EditorialStrategyId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_EditorialRestrictions_EditorialStrategies_EditorialStrategyId");
         });
     }
 

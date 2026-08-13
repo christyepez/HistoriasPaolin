@@ -7,12 +7,12 @@ Updated: 2026-08-13
 | Field | Value |
 |---|---|
 | Current Sprint | Sprint 1 - Canales y estrategia editorial |
-| Last Completed Task | HP-101 - Channel Management |
-| Current Task | Ready for HP-102 |
-| Next Task | HP-102 - Channel lifecycle and editorial state rules |
+| Last Completed Task | HP-102 - Editorial Strategy |
+| Current Task | Ready for HP-103 |
+| Next Task | HP-103 - EF SQL Server editorial persistence hardening |
 | Foundation Status | DONE; do not re-run as pending |
 | Build Status | OK; `dotnet build HistoriasPaolin.sln --no-restore`; 0 warnings, 0 errors |
-| Test Status | OK; `dotnet test HistoriasPaolin.sln --no-build`; 28/28 |
+| Test Status | OK; `dotnet test HistoriasPaolin.sln --no-build`; 52/52 |
 | Docker Status | API healthy, Worker healthy, migrations exited 0 |
 | Portal Integration | Gateway integration completed local; integrated smoke PASS 7/0/0 |
 | SQL Status | SQL operational; `HistoriasPaolinDb` ONLINE; migration applied |
@@ -35,5 +35,5 @@ Updated: 2026-08-13
 - Portal PR #32 must be reviewed/merged for a fresh Gateway route.
 - Full module onboarding in Portal Menu/Configuration/Security remains pending.
 - Productive IdP/OIDC remains pending; local smoke uses dev JWT only.
-- Angular Shell is not required for HP-101.
+- Angular Shell is not required for HP-101/HP-102.
 - `RequiresSqlServer` filter executed; no tests currently tagged.

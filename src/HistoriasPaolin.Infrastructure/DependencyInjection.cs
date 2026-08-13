@@ -1,6 +1,7 @@
 using HistoriasPaolin.Application.Common;
 using HistoriasPaolin.Application.Channels;
 using HistoriasPaolin.Application.Episodes;
+using HistoriasPaolin.Application.EditorialStrategies;
 using HistoriasPaolin.Application.Portal;
 using HistoriasPaolin.Infrastructure.Configuration;
 using HistoriasPaolin.Infrastructure.Health;
@@ -24,6 +25,8 @@ public static class DependencyInjection
         services.AddScoped<AuditingSaveChangesInterceptor>();
         services.AddScoped<IChannelRepository, ChannelRepository>();
         services.AddScoped<IChannelService, ChannelService>();
+        services.AddScoped<IEditorialStrategyRepository, EditorialStrategyRepository>();
+        services.AddScoped<IEditorialStrategyService, EditorialStrategyService>();
         services.AddScoped<IEpisodeRepository, EpisodeRepository>();
 
         services.AddOptions<SqlServerOptions>()

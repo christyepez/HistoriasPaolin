@@ -50,4 +50,4 @@ ValidationCommands:
 `git status --short`
 
 Result:
-Implemented in HP-101. Next READY task is HP-102.
+HP-101 implemented. HP-102 implemented. Next READY task is HP-103.
