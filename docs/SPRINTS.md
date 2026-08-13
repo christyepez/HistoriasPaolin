@@ -31,12 +31,14 @@ Estados permitidos: `PENDIENTE`, `EN_PROGRESO`, `BLOQUEADO`, `TERMINADO`.
 
 **Evidencia local 2026-08-13:** SQL Server compartido validado en puerto host `14333`, `HistoriasPaolinDb` creada, migracion inicial aplicada, API y Worker healthy, y `/health`, `/health/live`, `/health/ready` en `200 Healthy`. Portal Gateway enruta `/api/historiaspaolin/**` hacia `historiaspaolin-api:8080` en `portal-local-network`; smoke integrado Gateway -> HistoriasPaolin.Api validado con `PASS=7 FAIL=0 SKIP=0`.
 
-## Sprint 1 — Dominio y persistencia — PENDIENTE
-- HP-101 Modelar episodio, escenas, trabajos, activos y publicaciones.
-- HP-102 Implementar estados y transiciones.
-- HP-103 EF Core SQL Server.
-- HP-104 Repositorios, migraciones, índices, `rowversion` y auditoría.
-- HP-105 Pruebas de dominio e integración contra SQL Server.
+## Sprint 1 - Canales y estrategia editorial - EN_PROGRESO
+- HP-101 Administracion de canales y marca editorial. TERMINADO.
+- HP-102 Reglas de ciclo de vida, estados editoriales y transiciones. PENDIENTE.
+- HP-103 EF Core SQL Server para configuracion editorial restante. PENDIENTE.
+- HP-104 Repositorios, indices, `rowversion` y auditoria extendida. PENDIENTE.
+- HP-105 Pruebas de dominio e integracion contra SQL Server. PENDIENTE.
+
+**Evidencia HP-101 2026-08-13:** Channel y ChannelBrand implementados con seed `Historias de Paolín`, API `/api/channels`, permisos `historiaspaolin.channels.view/manage`, migracion `AddChannelManagement`, tests unitarios/integracion `28/28`, build `0 warnings / 0 errors`.
 
 ## Sprint 2 — Orquestador — PENDIENTE
 - HP-201 Pipeline por etapas.

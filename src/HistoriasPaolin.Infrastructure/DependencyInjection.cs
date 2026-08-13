@@ -1,4 +1,5 @@
 using HistoriasPaolin.Application.Common;
+using HistoriasPaolin.Application.Channels;
 using HistoriasPaolin.Application.Episodes;
 using HistoriasPaolin.Application.Portal;
 using HistoriasPaolin.Infrastructure.Configuration;
@@ -21,6 +22,8 @@ public static class DependencyInjection
         services.AddHttpContextAccessor();
         services.AddTransient<CorrelationIdHandler>();
         services.AddScoped<AuditingSaveChangesInterceptor>();
+        services.AddScoped<IChannelRepository, ChannelRepository>();
+        services.AddScoped<IChannelService, ChannelService>();
         services.AddScoped<IEpisodeRepository, EpisodeRepository>();
 
         services.AddOptions<SqlServerOptions>()

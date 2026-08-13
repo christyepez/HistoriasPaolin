@@ -7,12 +7,12 @@ Updated: 2026-08-13
 | Field | Value |
 |---|---|
 | Current Sprint | Sprint 1 - Canales y estrategia editorial |
-| Last Completed Task | PROMPT 06 - roadmap consolidation |
-| Current Task | Ready for first functional task |
-| Next Task | HP-101 - Channel Management |
+| Last Completed Task | HP-101 - Channel Management |
+| Current Task | Ready for HP-102 |
+| Next Task | HP-102 - Channel lifecycle and editorial state rules |
 | Foundation Status | DONE; do not re-run as pending |
-| Build Status | Last validated OK, 0 warnings, 0 errors |
-| Test Status | Last validated OK, 8/8 |
+| Build Status | OK; `dotnet build HistoriasPaolin.sln --no-restore`; 0 warnings, 0 errors |
+| Test Status | OK; `dotnet test HistoriasPaolin.sln --no-build`; 28/28 |
 | Docker Status | API healthy, Worker healthy, migrations exited 0 |
 | Portal Integration | Gateway integration completed local; integrated smoke PASS 7/0/0 |
 | SQL Status | SQL operational; `HistoriasPaolinDb` ONLINE; migration applied |
@@ -36,3 +36,4 @@ Updated: 2026-08-13
 - Full module onboarding in Portal Menu/Configuration/Security remains pending.
 - Productive IdP/OIDC remains pending; local smoke uses dev JWT only.
 - Angular Shell is not required for HP-101.
+- `RequiresSqlServer` filter executed; no tests currently tagged.

@@ -3,7 +3,7 @@
 TaskId: HP-101
 Sprint: 1 - Canales y estrategia editorial
 Title: Channel Management
-Status: READY
+Status: DONE
 
 Objective:
 Create the first functional vertical slice for managing independent content channels with editorial configuration, locale, budget and enabled provider metadata. Persist only in `HistoriasPaolinDb`.
@@ -48,3 +48,6 @@ ValidationCommands:
 `dotnet test`
 `git diff --check`
 `git status --short`
+
+Result:
+Implemented in HP-101. Next READY task is HP-102.

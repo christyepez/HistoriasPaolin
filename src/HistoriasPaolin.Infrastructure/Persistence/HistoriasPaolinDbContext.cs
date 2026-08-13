@@ -1,4 +1,5 @@
 using HistoriasPaolin.Domain.Common;
+using HistoriasPaolin.Domain.Channels;
 using HistoriasPaolin.Domain.Episodes;
 using HistoriasPaolin.Domain.Integration;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,8 @@ public sealed class HistoriasPaolinDbContext(DbContextOptions<HistoriasPaolinDbC
 {
     public DbSet<Episode> Episodes => Set<Episode>();
     public DbSet<EpisodeScene> EpisodeScenes => Set<EpisodeScene>();
+    public DbSet<Channel> Channels => Set<Channel>();
+    public DbSet<ChannelBrand> ChannelBrands => Set<ChannelBrand>();
     public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -57,6 +60,51 @@ public sealed class HistoriasPaolinDbContext(DbContextOptions<HistoriasPaolinDbC
             entity.Property(x => x.OccurredAtUtc).IsRequired();
             entity.HasIndex(x => new { x.TenantId, x.IdempotencyKey }).IsUnique().HasFilter("[IdempotencyKey] IS NOT NULL").HasDatabaseName("UX_OutboxMessages_TenantId_IdempotencyKey");
             entity.HasIndex(x => new { x.Status, x.OccurredAtUtc }).HasDatabaseName("IX_OutboxMessages_Status_OccurredAtUtc");
+        });
+
+        modelBuilder.Entity<Channel>(entity =>
+        {
+            entity.ToTable("Channels");
+            ConfigureAuditableEntity(entity);
+            entity.Property(x => x.Code).HasMaxLength(100).IsRequired();
+            entity.Property(x => x.Name).HasMaxLength(200).IsRequired();
+            entity.Property(x => x.Description).HasMaxLength(1000).IsRequired();
+            entity.Property(x => x.Language).HasMaxLength(12).IsRequired();
+            entity.Property(x => x.Country).HasMaxLength(12).IsRequired();
+            entity.Property(x => x.TimeZone).HasMaxLength(120).IsRequired();
+            entity.Property(x => x.DefaultAspectRatio).HasMaxLength(20).IsRequired();
+            entity.Property(x => x.DefaultPublicationPrivacy).HasMaxLength(20).IsRequired();
+            entity.HasIndex(x => x.Code).IsUnique().HasDatabaseName("UX_Channels_Code");
+            entity.HasIndex(x => x.Name).HasDatabaseName("IX_Channels_Name");
+            entity.HasIndex(x => x.IsActive).HasDatabaseName("IX_Channels_IsActive");
+        });
+
+        modelBuilder.Entity<ChannelBrand>(entity =>
+        {
+            entity.ToTable("ChannelBrands");
+            ConfigureAuditableEntity(entity);
+            entity.Property(x => x.ChannelId).IsRequired();
+            entity.Property(x => x.DisplayName).HasMaxLength(200).IsRequired();
+            entity.Property(x => x.ShortDescription).HasMaxLength(500).IsRequired();
+            entity.Property(x => x.LongDescription).HasMaxLength(2000).IsRequired();
+            entity.Property(x => x.PrimaryLanguage).HasMaxLength(12).IsRequired();
+            entity.Property(x => x.VisualStyle).HasMaxLength(1000).IsRequired();
+            entity.Property(x => x.ToneOfVoice).HasMaxLength(1000).IsRequired();
+            entity.Property(x => x.TargetAudience).HasMaxLength(1000).IsRequired();
+            entity.Property(x => x.BrandPrompt).HasMaxLength(4000).IsRequired();
+            entity.Property(x => x.CharacterConsistencyPrompt).HasMaxLength(4000).IsRequired();
+            entity.Property(x => x.NegativePrompt).HasMaxLength(4000).IsRequired();
+            entity.HasIndex(x => x.ChannelId).HasDatabaseName("IX_ChannelBrands_ChannelId");
+            entity.HasIndex(x => x.IsActive).HasDatabaseName("IX_ChannelBrands_IsActive");
+            entity.HasIndex(x => new { x.ChannelId, x.IsActive })
+                .IsUnique()
+                .HasFilter("[IsActive] = 1")
+                .HasDatabaseName("UX_ChannelBrands_ChannelId_IsActive");
+            entity.HasOne(x => x.Channel)
+                .WithMany(x => x.Brands)
+                .HasForeignKey(x => x.ChannelId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_ChannelBrands_Channels_ChannelId");
         });
     }
 

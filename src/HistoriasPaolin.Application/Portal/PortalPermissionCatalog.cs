@@ -14,6 +14,7 @@ public static class PortalPermissionCatalog
     public static readonly string[] Resources =
     [
         "historiaspaolin.dashboard",
+        "historiaspaolin.channels",
         "historiaspaolin.episodes",
         "historiaspaolin.scenes",
         "historiaspaolin.characters",
@@ -29,6 +30,7 @@ public static class PortalPermissionCatalog
     public static readonly string[] Actions =
     [
         "view",
+        "manage",
         "create",
         "update",
         "delete",
