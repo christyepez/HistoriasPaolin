@@ -1,10 +1,14 @@
 using System;
+using HistoriasPaolin.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace HistoriasPaolin.Infrastructure.Migrations;
 
+[DbContext(typeof(HistoriasPaolinDbContext))]
+[Migration("20260813160000_AddChannelManagement")]
 public partial class AddChannelManagement : Migration
 {
     protected override void Up(MigrationBuilder migrationBuilder)
@@ -76,19 +80,23 @@ public partial class AddChannelManagement : Migration
         migrationBuilder.CreateIndex(name: "IX_ChannelBrands_IsActive", table: "ChannelBrands", column: "IsActive");
         migrationBuilder.CreateIndex(name: "UX_ChannelBrands_ChannelId_IsActive", table: "ChannelBrands", columns: ["ChannelId", "IsActive"], unique: true, filter: "[IsActive] = 1");
 
-        var channelId = new Guid("11111111-1111-4111-8111-111111111111");
-        var brandId = new Guid("22222222-2222-4222-8222-222222222222");
-        var createdAt = new DateTime(2026, 8, 13, 0, 0, 0, DateTimeKind.Utc);
+        migrationBuilder.Sql("""
+DECLARE @ChannelId uniqueidentifier = '11111111-1111-4111-8111-111111111111';
+DECLARE @BrandId uniqueidentifier = '22222222-2222-4222-8222-222222222222';
+DECLARE @CreatedAt datetime2 = '2026-08-13T00:00:00';
 
-        migrationBuilder.InsertData(
-            table: "Channels",
-            columns: ["Id", "Code", "Name", "Description", "Language", "Country", "TimeZone", "IsActive", "IsMadeForKids", "DefaultAspectRatio", "DefaultVideoDurationSeconds", "DefaultPublicationPrivacy", "CreatedAtUtc", "CreatedBy"],
-            values: [channelId, "historias-paolin", "Historias de Paolín", "Canal infantil original para historias educativas y seguras.", "es", "EC", "America/Guayaquil", true, true, "16:9", 180, "private", createdAt, "migration"]);
+IF NOT EXISTS (SELECT 1 FROM Channels WHERE Code = N'historias-paolin')
+BEGIN
+    INSERT INTO Channels (Id, Code, Name, Description, Language, Country, TimeZone, IsActive, IsMadeForKids, DefaultAspectRatio, DefaultVideoDurationSeconds, DefaultPublicationPrivacy, CreatedAtUtc, CreatedBy)
+    VALUES (@ChannelId, N'historias-paolin', N'Historias de Paolín', N'Canal infantil original para historias educativas y seguras.', N'es', N'EC', N'America/Guayaquil', 1, 1, N'16:9', 180, N'private', @CreatedAt, N'migration');
+END
 
-        migrationBuilder.InsertData(
-            table: "ChannelBrands",
-            columns: ["Id", "ChannelId", "DisplayName", "ShortDescription", "LongDescription", "PrimaryLanguage", "VisualStyle", "ToneOfVoice", "TargetAudience", "TargetAgeFrom", "TargetAgeTo", "BrandPrompt", "CharacterConsistencyPrompt", "NegativePrompt", "IsActive", "CreatedAtUtc", "CreatedBy"],
-            values: [brandId, channelId, "Historias de Paolín", "Historias infantiles originales.", "Historias infantiles educativas, seguras y originales para primera infancia.", "es", "Colorido, amable, limpio y apto para ninos pequenos.", "Calido, curioso, respetuoso y tranquilo.", "Ninos de 2 a 6 anos y sus familias.", 2, 6, "Crear historias originales, tiernas y educativas para primera infancia.", "Mantener personajes consistentes, seguros y sin referencias a franquicias existentes.", "Sin violencia, miedo intenso, marcas, franquicias, imitaciones, canciones protegidas o estilos de personajes existentes.", true, createdAt, "migration"]);
+IF NOT EXISTS (SELECT 1 FROM ChannelBrands WHERE Id = @BrandId)
+BEGIN
+    INSERT INTO ChannelBrands (Id, ChannelId, DisplayName, ShortDescription, LongDescription, PrimaryLanguage, VisualStyle, ToneOfVoice, TargetAudience, TargetAgeFrom, TargetAgeTo, BrandPrompt, CharacterConsistencyPrompt, NegativePrompt, IsActive, CreatedAtUtc, CreatedBy)
+    VALUES (@BrandId, @ChannelId, N'Historias de Paolín', N'Historias infantiles originales.', N'Historias infantiles educativas, seguras y originales para primera infancia.', N'es', N'Colorido, amable, limpio y apto para ninos pequenos.', N'Calido, curioso, respetuoso y tranquilo.', N'Ninos de 2 a 6 anos y sus familias.', 2, 6, N'Crear historias originales, tiernas y educativas para primera infancia.', N'Mantener personajes consistentes, seguros y sin referencias a franquicias existentes.', N'Sin violencia, miedo intenso, marcas, franquicias, imitaciones, canciones protegidas o estilos de personajes existentes.', 1, @CreatedAt, N'migration');
+END
+""");
     }
 
     protected override void Down(MigrationBuilder migrationBuilder)

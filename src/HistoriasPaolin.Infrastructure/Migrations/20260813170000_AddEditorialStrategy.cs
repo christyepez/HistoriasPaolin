@@ -1,10 +1,14 @@
 using System;
+using HistoriasPaolin.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace HistoriasPaolin.Infrastructure.Migrations;
 
+[DbContext(typeof(HistoriasPaolinDbContext))]
+[Migration("20260813170000_AddEditorialStrategy")]
 public partial class AddEditorialStrategy : Migration
 {
     protected override void Up(MigrationBuilder migrationBuilder)
@@ -135,27 +139,58 @@ public partial class AddEditorialStrategy : Migration
         migrationBuilder.Sql("""
 DECLARE @ChannelId uniqueidentifier = (SELECT TOP 1 Id FROM Channels WHERE Code = N'historias-paolin');
 DECLARE @StrategyId uniqueidentifier = '33333333-3333-4333-8333-333333333333';
+DECLARE @CreatedAt datetime2 = '2026-08-13T00:00:00';
 IF @ChannelId IS NOT NULL AND NOT EXISTS (SELECT 1 FROM EditorialStrategies WHERE Id = @StrategyId)
 BEGIN
     INSERT INTO EditorialStrategies (Id, ChannelId, Name, Description, Objective, PrimaryAudience, AgeFrom, AgeTo, PrimaryLanguage, SecondaryLanguage, Country, Tone, EducationalApproach, ContentStyle, StorytellingStyle, DefaultEpisodeDurationSeconds, MinimumEpisodeDurationSeconds, MaximumEpisodeDurationSeconds, ScenesMin, ScenesMax, IsActive, Version, EffectiveFromUtc, EffectiveToUtc, CreatedAtUtc, CreatedBy)
-    VALUES (@StrategyId, @ChannelId, N'Estrategia Editorial Inicial', N'Estrategia base para Historias de Paolín.', N'Crear historias infantiles originales, educativas, seguras y entretenidas.', N'Niños de 2 a 6 años y sus familias.', 2, 6, N'es', N'', N'EC', N'cálido, alegre, claro y respetuoso', N'aprendizaje mediante historias, repetición moderada y participación', N'aventuras breves, visuales y educativas', N'inicio claro, pequeño reto, exploración, resolución y aprendizaje', 90, 60, 180, 5, 10, 1, 1, SYSUTCDATETIME(), NULL, SYSUTCDATETIME(), N'migration');
+    VALUES (@StrategyId, @ChannelId, N'Estrategia Editorial Inicial', N'Estrategia base para Historias de Paolín.', N'Crear historias infantiles originales, educativas, seguras y entretenidas.', N'Niños de 2 a 6 años y sus familias.', 2, 6, N'es', N'', N'EC', N'cálido, alegre, claro y respetuoso', N'aprendizaje mediante historias, repetición moderada y participación', N'aventuras breves, visuales y educativas', N'inicio claro, pequeño reto, exploración, resolución y aprendizaje', 90, 60, 180, 5, 10, 1, 1, @CreatedAt, NULL, @CreatedAt, N'migration');
 
     INSERT INTO EditorialPillars (Id, EditorialStrategyId, Code, Name, Description, Weight, IsActive, SortOrder, CreatedAtUtc, CreatedBy)
     VALUES
-    (NEWID(), @StrategyId, N'aprendizaje-basico', N'Aprendizaje básico', N'Conceptos iniciales para primera infancia.', 25, 1, 1, SYSUTCDATETIME(), N'migration'),
-    (NEWID(), @StrategyId, N'emociones-convivencia', N'Emociones y convivencia', N'Reconocer emociones y convivir con respeto.', 20, 1, 2, SYSUTCDATETIME(), N'migration'),
-    (NEWID(), @StrategyId, N'creatividad-imaginacion', N'Creatividad e imaginación', N'Juego creativo e imaginación segura.', 20, 1, 3, SYSUTCDATETIME(), N'migration'),
-    (NEWID(), @StrategyId, N'habitos-saludables', N'Hábitos saludables', N'Rutinas de cuidado personal.', 15, 1, 4, SYSUTCDATETIME(), N'migration'),
-    (NEWID(), @StrategyId, N'naturaleza-entorno', N'Naturaleza y entorno', N'Cuidado y observación del entorno.', 10, 1, 5, SYSUTCDATETIME(), N'migration'),
-    (NEWID(), @StrategyId, N'ciencia-preescolar', N'Ciencia preescolar', N'Curiosidad científica temprana.', 10, 1, 6, SYSUTCDATETIME(), N'migration');
+    ('44444444-0001-4444-8444-444444444444', @StrategyId, N'aprendizaje-basico', N'Aprendizaje básico', N'Conceptos iniciales para primera infancia.', 25, 1, 1, @CreatedAt, N'migration'),
+    ('44444444-0002-4444-8444-444444444444', @StrategyId, N'emociones-convivencia', N'Emociones y convivencia', N'Reconocer emociones y convivir con respeto.', 20, 1, 2, @CreatedAt, N'migration'),
+    ('44444444-0003-4444-8444-444444444444', @StrategyId, N'creatividad-imaginacion', N'Creatividad e imaginación', N'Juego creativo e imaginación segura.', 20, 1, 3, @CreatedAt, N'migration'),
+    ('44444444-0004-4444-8444-444444444444', @StrategyId, N'habitos-saludables', N'Hábitos saludables', N'Rutinas de cuidado personal.', 15, 1, 4, @CreatedAt, N'migration'),
+    ('44444444-0005-4444-8444-444444444444', @StrategyId, N'naturaleza-entorno', N'Naturaleza y entorno', N'Cuidado y observación del entorno.', 10, 1, 5, @CreatedAt, N'migration'),
+    ('44444444-0006-4444-8444-444444444444', @StrategyId, N'ciencia-preescolar', N'Ciencia preescolar', N'Curiosidad científica temprana.', 10, 1, 6, @CreatedAt, N'migration');
 
     INSERT INTO EditorialTopics (Id, EditorialStrategyId, Code, Name, Description, Category, Priority, MinAge, MaxAge, IsAllowed, IsActive, CreatedAtUtc, CreatedBy)
-    SELECT NEWID(), @StrategyId, value, value, N'Tema permitido inicial.', N'general', ROW_NUMBER() OVER (ORDER BY value), 2, 6, 1, 1, SYSUTCDATETIME(), N'migration'
-    FROM STRING_SPLIT(N'colores,numeros,formas,animales,emociones,amistad,familia,higiene,alimentacion-saludable,cuidado-del-planeta,seguridad-basica,musica,imaginacion,ciencia-preescolar,estaciones,rutinas,empatia', N',');
+    VALUES
+    ('55555555-0001-4555-8555-555555555555', @StrategyId, N'colores', N'colores', N'Tema permitido inicial.', N'general', 1, 2, 6, 1, 1, @CreatedAt, N'migration'),
+    ('55555555-0002-4555-8555-555555555555', @StrategyId, N'numeros', N'numeros', N'Tema permitido inicial.', N'general', 2, 2, 6, 1, 1, @CreatedAt, N'migration'),
+    ('55555555-0003-4555-8555-555555555555', @StrategyId, N'formas', N'formas', N'Tema permitido inicial.', N'general', 3, 2, 6, 1, 1, @CreatedAt, N'migration'),
+    ('55555555-0004-4555-8555-555555555555', @StrategyId, N'animales', N'animales', N'Tema permitido inicial.', N'general', 4, 2, 6, 1, 1, @CreatedAt, N'migration'),
+    ('55555555-0005-4555-8555-555555555555', @StrategyId, N'emociones', N'emociones', N'Tema permitido inicial.', N'general', 5, 2, 6, 1, 1, @CreatedAt, N'migration'),
+    ('55555555-0006-4555-8555-555555555555', @StrategyId, N'amistad', N'amistad', N'Tema permitido inicial.', N'general', 6, 2, 6, 1, 1, @CreatedAt, N'migration'),
+    ('55555555-0007-4555-8555-555555555555', @StrategyId, N'familia', N'familia', N'Tema permitido inicial.', N'general', 7, 2, 6, 1, 1, @CreatedAt, N'migration'),
+    ('55555555-0008-4555-8555-555555555555', @StrategyId, N'higiene', N'higiene', N'Tema permitido inicial.', N'general', 8, 2, 6, 1, 1, @CreatedAt, N'migration'),
+    ('55555555-0009-4555-8555-555555555555', @StrategyId, N'alimentacion-saludable', N'alimentacion saludable', N'Tema permitido inicial.', N'general', 9, 2, 6, 1, 1, @CreatedAt, N'migration'),
+    ('55555555-0010-4555-8555-555555555555', @StrategyId, N'cuidado-del-planeta', N'cuidado del planeta', N'Tema permitido inicial.', N'general', 10, 2, 6, 1, 1, @CreatedAt, N'migration'),
+    ('55555555-0011-4555-8555-555555555555', @StrategyId, N'seguridad-basica', N'seguridad básica', N'Tema permitido inicial.', N'general', 11, 2, 6, 1, 1, @CreatedAt, N'migration'),
+    ('55555555-0012-4555-8555-555555555555', @StrategyId, N'musica', N'música', N'Tema permitido inicial.', N'general', 12, 2, 6, 1, 1, @CreatedAt, N'migration'),
+    ('55555555-0013-4555-8555-555555555555', @StrategyId, N'imaginacion', N'imaginación', N'Tema permitido inicial.', N'general', 13, 2, 6, 1, 1, @CreatedAt, N'migration'),
+    ('55555555-0014-4555-8555-555555555555', @StrategyId, N'ciencia-preescolar', N'ciencia preescolar', N'Tema permitido inicial.', N'general', 14, 2, 6, 1, 1, @CreatedAt, N'migration'),
+    ('55555555-0015-4555-8555-555555555555', @StrategyId, N'estaciones', N'estaciones', N'Tema permitido inicial.', N'general', 15, 2, 6, 1, 1, @CreatedAt, N'migration'),
+    ('55555555-0016-4555-8555-555555555555', @StrategyId, N'rutinas', N'rutinas', N'Tema permitido inicial.', N'general', 16, 2, 6, 1, 1, @CreatedAt, N'migration'),
+    ('55555555-0017-4555-8555-555555555555', @StrategyId, N'empatia', N'empatía', N'Tema permitido inicial.', N'general', 17, 2, 6, 1, 1, @CreatedAt, N'migration');
 
     INSERT INTO EditorialRestrictions (Id, EditorialStrategyId, RestrictionType, Code, Description, Severity, IsBlocking, IsActive, CreatedAtUtc, CreatedBy)
-    SELECT NEWID(), @StrategyId, N'SafetyRule', value, N'Restricción blocking inicial.', N'block', 1, 1, SYSUTCDATETIME(), N'migration'
-    FROM STRING_SPLIT(N'violencia-grafica,armas,miedo-intenso,retos-peligrosos,apuestas,alcohol,drogas,contenido-sexual,marcas-comerciales-eje,personajes-protegidos-terceros,celebridades,clonacion-voz-terceros,canciones-protegidas,ocultar-secretos-padres,pedir-datos-personales-nino', N',');
+    VALUES
+    ('66666666-0001-4666-8666-666666666666', @StrategyId, N'SafetyRule', N'violencia-grafica', N'Restricción blocking inicial.', N'block', 1, 1, @CreatedAt, N'migration'),
+    ('66666666-0002-4666-8666-666666666666', @StrategyId, N'SafetyRule', N'armas', N'Restricción blocking inicial.', N'block', 1, 1, @CreatedAt, N'migration'),
+    ('66666666-0003-4666-8666-666666666666', @StrategyId, N'SafetyRule', N'miedo-intenso', N'Restricción blocking inicial.', N'block', 1, 1, @CreatedAt, N'migration'),
+    ('66666666-0004-4666-8666-666666666666', @StrategyId, N'SafetyRule', N'retos-peligrosos', N'Restricción blocking inicial.', N'block', 1, 1, @CreatedAt, N'migration'),
+    ('66666666-0005-4666-8666-666666666666', @StrategyId, N'SafetyRule', N'apuestas', N'Restricción blocking inicial.', N'block', 1, 1, @CreatedAt, N'migration'),
+    ('66666666-0006-4666-8666-666666666666', @StrategyId, N'SafetyRule', N'alcohol', N'Restricción blocking inicial.', N'block', 1, 1, @CreatedAt, N'migration'),
+    ('66666666-0007-4666-8666-666666666666', @StrategyId, N'SafetyRule', N'drogas', N'Restricción blocking inicial.', N'block', 1, 1, @CreatedAt, N'migration'),
+    ('66666666-0008-4666-8666-666666666666', @StrategyId, N'SafetyRule', N'contenido-sexual', N'Restricción blocking inicial.', N'block', 1, 1, @CreatedAt, N'migration'),
+    ('66666666-0009-4666-8666-666666666666', @StrategyId, N'SafetyRule', N'marcas-comerciales-eje', N'Restricción blocking inicial.', N'block', 1, 1, @CreatedAt, N'migration'),
+    ('66666666-0010-4666-8666-666666666666', @StrategyId, N'SafetyRule', N'personajes-protegidos-terceros', N'Restricción blocking inicial.', N'block', 1, 1, @CreatedAt, N'migration'),
+    ('66666666-0011-4666-8666-666666666666', @StrategyId, N'SafetyRule', N'celebridades', N'Restricción blocking inicial.', N'block', 1, 1, @CreatedAt, N'migration'),
+    ('66666666-0012-4666-8666-666666666666', @StrategyId, N'SafetyRule', N'clonacion-voz-terceros', N'Restricción blocking inicial.', N'block', 1, 1, @CreatedAt, N'migration'),
+    ('66666666-0013-4666-8666-666666666666', @StrategyId, N'SafetyRule', N'canciones-protegidas', N'Restricción blocking inicial.', N'block', 1, 1, @CreatedAt, N'migration'),
+    ('66666666-0014-4666-8666-666666666666', @StrategyId, N'SafetyRule', N'ocultar-secretos-padres', N'Restricción blocking inicial.', N'block', 1, 1, @CreatedAt, N'migration'),
+    ('66666666-0015-4666-8666-666666666666', @StrategyId, N'SafetyRule', N'pedir-datos-personales-nino', N'Restricción blocking inicial.', N'block', 1, 1, @CreatedAt, N'migration');
 END
 """);
     }

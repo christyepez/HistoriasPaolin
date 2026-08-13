@@ -34,13 +34,15 @@ Estados permitidos: `PENDIENTE`, `EN_PROGRESO`, `BLOQUEADO`, `TERMINADO`.
 ## Sprint 1 - Canales y estrategia editorial - EN_PROGRESO
 - HP-101 Administracion de canales y marca editorial. TERMINADO.
 - HP-102 Estrategia editorial por canal, pilares, temas y restricciones. TERMINADO.
-- HP-103 EF Core SQL Server para configuracion editorial restante. PENDIENTE.
+- HP-103 EF Core SQL Server, snapshot, migraciones, indices y seeds. TERMINADO.
 - HP-104 Repositorios, indices, `rowversion` y auditoria extendida. PENDIENTE.
 - HP-105 Pruebas de dominio e integracion contra SQL Server. PENDIENTE.
 
 **Evidencia HP-101 2026-08-13:** Channel y ChannelBrand implementados con seed `Historias de Paolín`, API `/api/channels`, permisos `historiaspaolin.channels.view/manage`, migracion `AddChannelManagement`, tests unitarios/integracion `28/28`, build `0 warnings / 0 errors`.
 
 **Evidencia HP-102 2026-08-13:** EditorialStrategy, EditorialPillar, EditorialTopic y EditorialRestriction implementados con seed inicial idempotente para `historias-paolin`, API `/api/editorial-strategies`, permisos `historiaspaolin.editorial.view/manage/activate`, migracion `AddEditorialStrategy`, tests unitarios/integracion `52/52`, build `0 warnings / 0 errors`.
+
+**Evidencia HP-103 2026-08-13:** EF Core ModelSnapshot synchronized and validated, `dotnet-ef` local 8.0.0 agregado, migracion `HP103PersistenceHardening` generada sin operaciones de modelo, orden de migraciones validado, script idempotente generado temporalmente, pending model changes `No`, tests `62/62`, build `0 warnings / 0 errors`. Aplicacion local de migraciones no ejecutada por timeout de conexion SQL Server.
 
 ## Sprint 2 — Orquestador — PENDIENTE
 - HP-201 Pipeline por etapas.
