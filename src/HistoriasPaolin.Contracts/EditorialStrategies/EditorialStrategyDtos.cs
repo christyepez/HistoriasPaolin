@@ -1,5 +1,7 @@
 namespace HistoriasPaolin.Contracts.EditorialStrategies;
 
+public sealed record AuditMetadataDto(DateTime CreatedAtUtc, string CreatedBy, DateTime? UpdatedAtUtc, string? UpdatedBy);
+
 public sealed record EditorialStrategySummaryDto(Guid Id, Guid ChannelId, string Name, bool IsActive, int Version, DateTime EffectiveFromUtc, DateTime? EffectiveToUtc);
 
 public sealed record EditorialStrategyDetailDto(
@@ -27,7 +29,8 @@ public sealed record EditorialStrategyDetailDto(
     int Version,
     DateTime EffectiveFromUtc,
     DateTime? EffectiveToUtc,
-    string RowVersion);
+    string RowVersion,
+    AuditMetadataDto Audit);
 
 public sealed record CreateEditorialStrategyRequest(
     string Name,

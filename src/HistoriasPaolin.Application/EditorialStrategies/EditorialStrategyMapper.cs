@@ -34,7 +34,8 @@ public static class EditorialStrategyMapper
             strategy.Version,
             strategy.EffectiveFromUtc,
             strategy.EffectiveToUtc,
-            Convert.ToBase64String(strategy.RowVersion));
+            Convert.ToBase64String(strategy.RowVersion),
+            new AuditMetadataDto(strategy.CreatedAtUtc, strategy.CreatedBy, strategy.UpdatedAtUtc, strategy.UpdatedBy));
 
     public static EditorialPillarDto ToPillar(EditorialPillar pillar) =>
         new(pillar.Id, pillar.Code, pillar.Name, pillar.Description, pillar.Weight, pillar.IsActive, pillar.SortOrder);

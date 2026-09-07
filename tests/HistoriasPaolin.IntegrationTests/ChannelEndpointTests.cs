@@ -199,9 +199,11 @@ public sealed class ChannelEndpointTests : IClassFixture<WebApplicationFactory<P
         private static ChannelSummaryDto Summary() => new(ChannelId, "historias-paolin", "Historias de Paolin", "es", "EC", true, true, "private");
 
         private static ChannelDetailDto Detail(Guid id) =>
-            new(id, "historias-paolin", "Historias de Paolin", "Canal infantil", "es", "EC", "America/Guayaquil", true, true, "16:9", 180, "private", RowVersion(), Brand(id));
+            new(id, "historias-paolin", "Historias de Paolin", "Canal infantil", "es", "EC", "America/Guayaquil", true, true, "16:9", 180, "private", RowVersion(), Audit(), Brand(id));
 
         private static ChannelBrandDto Brand(Guid id) =>
-            new(Guid.Parse("cccccccc-cccc-4ccc-8ccc-cccccccccccc"), id, "Historias de Paolin", "Historias", "Historias educativas", "es", "Colorido", "Calido", "Familias", 2, 6, "Prompt", "Consistencia", "Negativo", true, RowVersion());
+            new(Guid.Parse("cccccccc-cccc-4ccc-8ccc-cccccccccccc"), id, "Historias de Paolin", "Historias", "Historias educativas", "es", "Colorido", "Calido", "Familias", 2, 6, "Prompt", "Consistencia", "Negativo", true, RowVersion(), Audit());
+
+        private static AuditMetadataDto Audit() => new(DateTime.UtcNow.AddDays(-1), "tests", DateTime.UtcNow, "tests");
     }
 }

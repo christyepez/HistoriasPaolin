@@ -24,24 +24,30 @@ public sealed class AuditingSaveChangesInterceptor(ICurrentUser currentUser) : S
 
     private void ApplyAudit(DbContext? context)
     {
+        ApplyAudit(context, currentUser.UserName, DateTime.UtcNow);
+    }
+
+    public static void ApplyAudit(DbContext? context, string userName, DateTime now)
+    {
         if (context is null)
         {
             return;
         }
 
-        var now = DateTime.UtcNow;
         foreach (var entry in context.ChangeTracker.Entries<AuditableEntity>())
         {
             if (entry.State == EntityState.Added)
             {
                 entry.Entity.CreatedAtUtc = now;
-                entry.Entity.CreatedBy = currentUser.UserName;
+                entry.Entity.CreatedBy = userName;
             }
 
             if (entry.State == EntityState.Modified)
             {
+                entry.Property(x => x.CreatedAtUtc).IsModified = false;
+                entry.Property(x => x.CreatedBy).IsModified = false;
                 entry.Entity.UpdatedAtUtc = now;
-                entry.Entity.UpdatedBy = currentUser.UserName;
+                entry.Entity.UpdatedBy = userName;
             }
         }
     }

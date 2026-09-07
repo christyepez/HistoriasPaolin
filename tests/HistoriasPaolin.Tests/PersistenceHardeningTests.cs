@@ -38,7 +38,8 @@ public sealed class PersistenceHardeningTests
                 "20260803220000_InitialSqlServerSchema",
                 "20260813160000_AddChannelManagement",
                 "20260813170000_AddEditorialStrategy",
-                "20260813201219_HP103PersistenceHardening"
+                "20260813201219_HP103PersistenceHardening",
+                "20260907201736_HP104ConcurrencyAuditHardening"
             ],
             migrations);
     }
@@ -106,6 +107,70 @@ public sealed class PersistenceHardeningTests
     }
 
     [Fact]
+    public void AuditableEntitiesHaveCreatedAtIndex()
+    {
+        using var dbContext = CreateContext();
+        var expectedIndexes = new Dictionary<Type, string>
+        {
+            [typeof(Channel)] = "IX_Channels_CreatedAtUtc",
+            [typeof(ChannelBrand)] = "IX_ChannelBrands_CreatedAtUtc",
+            [typeof(EditorialStrategy)] = "IX_EditorialStrategies_CreatedAtUtc",
+            [typeof(EditorialPillar)] = "IX_EditorialPillars_CreatedAtUtc",
+            [typeof(EditorialTopic)] = "IX_EditorialTopics_CreatedAtUtc",
+            [typeof(EditorialRestriction)] = "IX_EditorialRestrictions_CreatedAtUtc",
+            [typeof(Episode)] = "IX_Episodes_CreatedAtUtc",
+            [typeof(EpisodeScene)] = "IX_EpisodeScenes_CreatedAtUtc",
+            [typeof(OutboxMessage)] = "IX_OutboxMessages_CreatedAtUtc"
+        };
+
+        foreach (var (entityType, indexName) in expectedIndexes)
+        {
+            Assert.Contains(
+                dbContext.Model.FindEntityType(entityType)!.GetIndexes(),
+                index => index.GetDatabaseName() == indexName);
+        }
+    }
+
+    [Fact]
+    public void AuditInterceptorStampsCreatedAuditFields()
+    {
+        using var dbContext = CreateContext();
+        var now = new DateTime(2026, 8, 13, 20, 0, 0, DateTimeKind.Utc);
+        var channel = ValidChannel();
+
+        dbContext.Channels.Add(channel);
+        AuditingSaveChangesInterceptor.ApplyAudit(dbContext, "hp-user", now);
+
+        Assert.Equal(now, channel.CreatedAtUtc);
+        Assert.Equal("hp-user", channel.CreatedBy);
+        Assert.Null(channel.UpdatedAtUtc);
+        Assert.Null(channel.UpdatedBy);
+    }
+
+    [Fact]
+    public void AuditInterceptorStampsUpdatedAuditFieldsWithoutOverwritingCreatedAudit()
+    {
+        using var dbContext = CreateContext();
+        var createdAt = new DateTime(2026, 8, 1, 12, 0, 0, DateTimeKind.Utc);
+        var updatedAt = new DateTime(2026, 8, 13, 20, 0, 0, DateTimeKind.Utc);
+        var channel = ValidChannel();
+        channel.CreatedAtUtc = createdAt;
+        channel.CreatedBy = "migration";
+
+        dbContext.Attach(channel);
+        channel.Name = "Historias de Paolin Editado";
+        dbContext.Entry(channel).State = EntityState.Modified;
+        AuditingSaveChangesInterceptor.ApplyAudit(dbContext, "editor", updatedAt);
+
+        Assert.Equal(createdAt, channel.CreatedAtUtc);
+        Assert.Equal("migration", channel.CreatedBy);
+        Assert.Equal(updatedAt, channel.UpdatedAtUtc);
+        Assert.Equal("editor", channel.UpdatedBy);
+        Assert.False(dbContext.Entry(channel).Property(x => x.CreatedAtUtc).IsModified);
+        Assert.False(dbContext.Entry(channel).Property(x => x.CreatedBy).IsModified);
+    }
+
+    [Fact]
     public void ForeignKeysUseExplicitCascadeDeleteBehavior()
     {
         using var dbContext = CreateContext();
@@ -165,4 +230,19 @@ public sealed class PersistenceHardeningTests
         Assert.NotNull(current);
         return Path.Combine(current!.FullName, "src", "HistoriasPaolin.Infrastructure", "Migrations");
     }
+
+    private static Channel ValidChannel() => new()
+    {
+        Id = Guid.Parse("aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"),
+        Code = "historias-paolin",
+        Name = "Historias de Paolin",
+        Description = "Canal infantil",
+        Language = "es",
+        Country = "EC",
+        TimeZone = "America/Guayaquil",
+        IsMadeForKids = true,
+        DefaultAspectRatio = "16:9",
+        DefaultVideoDurationSeconds = 180,
+        DefaultPublicationPrivacy = "private"
+    };
 }

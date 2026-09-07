@@ -31,6 +31,7 @@ public static class ChannelMapper
             channel.DefaultVideoDurationSeconds,
             channel.DefaultPublicationPrivacy,
             Convert.ToBase64String(channel.RowVersion),
+            ToAudit(channel),
             channel.ActiveBrand is null ? null : ToBrand(channel.ActiveBrand));
 
     public static ChannelBrandDto ToBrand(ChannelBrand brand) =>
@@ -50,5 +51,12 @@ public static class ChannelMapper
             brand.CharacterConsistencyPrompt,
             brand.NegativePrompt,
             brand.IsActive,
-            Convert.ToBase64String(brand.RowVersion));
+            Convert.ToBase64String(brand.RowVersion),
+            ToAudit(brand));
+
+    private static AuditMetadataDto ToAudit(Channel channel) =>
+        new(channel.CreatedAtUtc, channel.CreatedBy, channel.UpdatedAtUtc, channel.UpdatedBy);
+
+    private static AuditMetadataDto ToAudit(ChannelBrand brand) =>
+        new(brand.CreatedAtUtc, brand.CreatedBy, brand.UpdatedAtUtc, brand.UpdatedBy);
 }

@@ -1,5 +1,7 @@
 namespace HistoriasPaolin.Contracts.Channels;
 
+public sealed record AuditMetadataDto(DateTime CreatedAtUtc, string CreatedBy, DateTime? UpdatedAtUtc, string? UpdatedBy);
+
 public sealed record ChannelSummaryDto(
     Guid Id,
     string Code,
@@ -24,6 +26,7 @@ public sealed record ChannelDetailDto(
     int DefaultVideoDurationSeconds,
     string DefaultPublicationPrivacy,
     string RowVersion,
+    AuditMetadataDto Audit,
     ChannelBrandDto? ActiveBrand);
 
 public sealed record CreateChannelRequest(
@@ -68,7 +71,8 @@ public sealed record ChannelBrandDto(
     string CharacterConsistencyPrompt,
     string NegativePrompt,
     bool IsActive,
-    string RowVersion);
+    string RowVersion,
+    AuditMetadataDto Audit);
 
 public sealed record UpdateChannelBrandRequest(
     string DisplayName,

@@ -211,6 +211,8 @@ public sealed class EditorialStrategyEndpointTests : IClassFixture<WebApplicatio
         public Task<IReadOnlyList<EditorialRestrictionDto>> GetRestrictionsAsync(Guid id, CancellationToken cancellationToken) => Task.FromResult<IReadOnlyList<EditorialRestrictionDto>>([]);
         public Task<IReadOnlyList<EditorialRestrictionDto>> UpdateRestrictionsAsync(Guid id, UpdateEditorialRestrictionsRequest request, string actor, string correlationId, CancellationToken cancellationToken) => Task.FromResult(request.Restrictions);
 
-        private static EditorialStrategyDetailDto Detail(Guid id) => new(id, ChannelId, "Estrategia", "", "Objetivo", "Audiencia", 2, 6, "es", "", "EC", "calido", "educativo", "aventuras", "inicio-cierre", 90, 60, 180, 5, 10, true, 1, DateTime.UtcNow.AddDays(-1), null, RowVersion());
+        private static EditorialStrategyDetailDto Detail(Guid id) => new(id, ChannelId, "Estrategia", "", "Objetivo", "Audiencia", 2, 6, "es", "", "EC", "calido", "educativo", "aventuras", "inicio-cierre", 90, 60, 180, 5, 10, true, 1, DateTime.UtcNow.AddDays(-1), null, RowVersion(), Audit());
+
+        private static AuditMetadataDto Audit() => new(DateTime.UtcNow.AddDays(-1), "tests", DateTime.UtcNow, "tests");
     }
 }

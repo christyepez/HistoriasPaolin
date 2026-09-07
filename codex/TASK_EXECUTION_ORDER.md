@@ -5,7 +5,7 @@
 | 1 | HP-101 | DONE | HP-006, HP-0A02 | Channel Management implemented |
 | 2 | HP-102 | DONE | HP-101 | Editorial Strategy implemented |
 | 3 | HP-103 | DONE | HP-102 | EF persistence hardening completed |
-| 4 | HP-104 | READY | HP-103 | Adds concurrency/audit fields |
+| 4 | HP-104 | DONE | HP-103 | Concurrency/audit hardening completed |
 | 5 | HP-105 | READY | HP-104 | Closes Sprint 1 with tests |
 | 6 | HP-201 | BLOCKED | HP-105 | SeriesBible depends on channels |
 | 7 | HP-301 | BLOCKED | HP-205 | Ideas/scripts need series continuity |

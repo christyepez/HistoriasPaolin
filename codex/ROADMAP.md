@@ -36,7 +36,7 @@ Status values: DONE, PARTIAL, READY, BLOCKED, DEFERRED, NOT_REQUIRED.
 | HP-101 | 1 | DONE | HP-006,HP-0A02 | HP-102,HP-201 | Backend Architect | channel-strategy | Configuration | M | Channel CRUD persists in HistoriasPaolinDb |
 | HP-102 | 1 | DONE | HP-101 | HP-103 | ChannelStrategyAgent | channel-strategy | Configuration | S | Editorial strategy persists and governs channel content rules |
 | HP-103 | 1 | DONE | HP-101,HP-102 | HP-104 | Backend Architect | sqlserver | none | M | EF ModelSnapshot synchronized; migrations/order/indexes hardened |
-| HP-104 | 1 | READY | HP-103 | HP-105 | Backend Architect | persistence | Audit future | M | Concurrency and audit fields defined |
+| HP-104 | 1 | DONE | HP-103 | HP-105 | Backend Architect | persistence | Audit future | M | Concurrency and audit fields defined; CreatedAt indexes added |
 | HP-105 | 1 | READY | HP-104 | HP-201 | Backend Architect | testing | none | M | Channel tests cover domain/API/persistence |
 | HP-201 | 2 | BLOCKED | HP-105 | HP-202 | StoryStrategyAgent | story-bible | Configuration | M | SeriesBible aggregate exists |
 | HP-202 | 2 | BLOCKED | HP-201 | HP-203 | StoryStrategyAgent | story-bible | Configuration | M | Characters and relationships persist |

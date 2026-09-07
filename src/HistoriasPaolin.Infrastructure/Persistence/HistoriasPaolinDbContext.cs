@@ -23,7 +23,7 @@ public sealed class HistoriasPaolinDbContext(DbContextOptions<HistoriasPaolinDbC
         modelBuilder.Entity<Episode>(entity =>
         {
             entity.ToTable("Episodes");
-            ConfigureAuditableEntity(entity);
+            ConfigureAuditableEntity(entity, "Episodes");
             entity.Property(x => x.Title).HasColumnName("Title").HasMaxLength(200).IsRequired();
             entity.Property(x => x.Status).HasColumnName("Status").HasMaxLength(40).IsRequired();
             entity.Property(x => x.EstimatedCostUsd).HasColumnName("EstimatedCostUsd").HasPrecision(18, 4);
@@ -33,7 +33,7 @@ public sealed class HistoriasPaolinDbContext(DbContextOptions<HistoriasPaolinDbC
         modelBuilder.Entity<EpisodeScene>(entity =>
         {
             entity.ToTable("EpisodeScenes");
-            ConfigureAuditableEntity(entity);
+            ConfigureAuditableEntity(entity, "EpisodeScenes");
             entity.Property(x => x.EpisodeId).HasColumnName("EpisodeId").IsRequired();
             entity.Property(x => x.SortOrder).HasColumnName("SortOrder").IsRequired();
             entity.Property(x => x.Prompt).HasColumnName("Prompt").HasMaxLength(4000).IsRequired();
@@ -49,7 +49,7 @@ public sealed class HistoriasPaolinDbContext(DbContextOptions<HistoriasPaolinDbC
         modelBuilder.Entity<OutboxMessage>(entity =>
         {
             entity.ToTable("OutboxMessages");
-            ConfigureAuditableEntity(entity);
+            ConfigureAuditableEntity(entity, "OutboxMessages");
             entity.Property(x => x.TenantId).HasMaxLength(80).IsRequired();
             entity.Property(x => x.AggregateType).HasMaxLength(120).IsRequired();
             entity.Property(x => x.AggregateId).HasMaxLength(120).IsRequired();
@@ -69,7 +69,7 @@ public sealed class HistoriasPaolinDbContext(DbContextOptions<HistoriasPaolinDbC
         modelBuilder.Entity<Channel>(entity =>
         {
             entity.ToTable("Channels");
-            ConfigureAuditableEntity(entity);
+            ConfigureAuditableEntity(entity, "Channels");
             entity.Property(x => x.Code).HasMaxLength(100).IsRequired();
             entity.Property(x => x.Name).HasMaxLength(200).IsRequired();
             entity.Property(x => x.Description).HasMaxLength(1000).IsRequired();
@@ -86,7 +86,7 @@ public sealed class HistoriasPaolinDbContext(DbContextOptions<HistoriasPaolinDbC
         modelBuilder.Entity<ChannelBrand>(entity =>
         {
             entity.ToTable("ChannelBrands");
-            ConfigureAuditableEntity(entity);
+            ConfigureAuditableEntity(entity, "ChannelBrands");
             entity.Property(x => x.ChannelId).IsRequired();
             entity.Property(x => x.DisplayName).HasMaxLength(200).IsRequired();
             entity.Property(x => x.ShortDescription).HasMaxLength(500).IsRequired();
@@ -114,7 +114,7 @@ public sealed class HistoriasPaolinDbContext(DbContextOptions<HistoriasPaolinDbC
         modelBuilder.Entity<EditorialStrategy>(entity =>
         {
             entity.ToTable("EditorialStrategies");
-            ConfigureAuditableEntity(entity);
+            ConfigureAuditableEntity(entity, "EditorialStrategies");
             entity.Property(x => x.ChannelId).IsRequired();
             entity.Property(x => x.Name).HasMaxLength(200).IsRequired();
             entity.Property(x => x.Description).HasMaxLength(1000).IsRequired();
@@ -144,7 +144,7 @@ public sealed class HistoriasPaolinDbContext(DbContextOptions<HistoriasPaolinDbC
         modelBuilder.Entity<EditorialPillar>(entity =>
         {
             entity.ToTable("EditorialPillars");
-            ConfigureAuditableEntity(entity);
+            ConfigureAuditableEntity(entity, "EditorialPillars");
             entity.Property(x => x.Code).HasMaxLength(100).IsRequired();
             entity.Property(x => x.Name).HasMaxLength(200).IsRequired();
             entity.Property(x => x.Description).HasMaxLength(1000).IsRequired();
@@ -159,7 +159,7 @@ public sealed class HistoriasPaolinDbContext(DbContextOptions<HistoriasPaolinDbC
         modelBuilder.Entity<EditorialTopic>(entity =>
         {
             entity.ToTable("EditorialTopics");
-            ConfigureAuditableEntity(entity);
+            ConfigureAuditableEntity(entity, "EditorialTopics");
             entity.Property(x => x.Code).HasMaxLength(100).IsRequired();
             entity.Property(x => x.Name).HasMaxLength(200).IsRequired();
             entity.Property(x => x.Description).HasMaxLength(1000).IsRequired();
@@ -175,7 +175,7 @@ public sealed class HistoriasPaolinDbContext(DbContextOptions<HistoriasPaolinDbC
         modelBuilder.Entity<EditorialRestriction>(entity =>
         {
             entity.ToTable("EditorialRestrictions");
-            ConfigureAuditableEntity(entity);
+            ConfigureAuditableEntity(entity, "EditorialRestrictions");
             entity.Property(x => x.RestrictionType).HasMaxLength(120).IsRequired();
             entity.Property(x => x.Code).HasMaxLength(100).IsRequired();
             entity.Property(x => x.Description).HasMaxLength(1000).IsRequired();
@@ -189,7 +189,7 @@ public sealed class HistoriasPaolinDbContext(DbContextOptions<HistoriasPaolinDbC
         });
     }
 
-    private static void ConfigureAuditableEntity<TEntity>(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<TEntity> entity)
+    private static void ConfigureAuditableEntity<TEntity>(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<TEntity> entity, string tableName)
         where TEntity : AuditableEntity
     {
         entity.HasKey(x => x.Id);
@@ -199,5 +199,6 @@ public sealed class HistoriasPaolinDbContext(DbContextOptions<HistoriasPaolinDbC
         entity.Property(x => x.CreatedBy).HasColumnName("CreatedBy").HasMaxLength(120).IsRequired();
         entity.Property(x => x.UpdatedBy).HasColumnName("UpdatedBy").HasMaxLength(120);
         entity.Property(x => x.RowVersion).HasColumnName("RowVersion").IsRowVersion();
+        entity.HasIndex(x => x.CreatedAtUtc).HasDatabaseName($"IX_{tableName}_CreatedAtUtc");
     }
 }
