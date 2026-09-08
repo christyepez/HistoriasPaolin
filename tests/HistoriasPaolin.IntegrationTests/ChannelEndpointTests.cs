@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
@@ -75,6 +76,23 @@ public sealed class ChannelEndpointTests : IClassFixture<WebApplicationFactory<P
     }
 
     [Fact]
+    public async Task GetByIdReturnsAuditMetadata()
+    {
+        using var client = _factory.CreateClient();
+        client.DefaultRequestHeaders.Authorization = Bearer("historiaspaolin.channels.view");
+
+        using var response = await client.GetAsync($"/api/channels/{FakeChannelService.ChannelId}");
+        var channel = await response.Content.ReadFromJsonAsync<ChannelDetailDto>();
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(channel);
+        Assert.Equal("tests", channel!.Audit.CreatedBy);
+        Assert.Equal("tests", channel.Audit.UpdatedBy);
+        Assert.NotEqual(default, channel.Audit.CreatedAtUtc);
+        Assert.NotNull(channel.Audit.UpdatedAtUtc);
+    }
+
+    [Fact]
     public async Task GetByCodeReturnsChannel()
     {
         using var client = _factory.CreateClient();
@@ -119,6 +137,21 @@ public sealed class ChannelEndpointTests : IClassFixture<WebApplicationFactory<P
     }
 
     [Fact]
+    public async Task GetBrandReturnsAuditMetadata()
+    {
+        using var client = _factory.CreateClient();
+        client.DefaultRequestHeaders.Authorization = Bearer("historiaspaolin.channels.view");
+
+        using var response = await client.GetAsync($"/api/channels/{FakeChannelService.ChannelId}/brand");
+        var brand = await response.Content.ReadFromJsonAsync<ChannelBrandDto>();
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(brand);
+        Assert.Equal("tests", brand!.Audit.CreatedBy);
+        Assert.Equal("tests", brand.Audit.UpdatedBy);
+    }
+
+    [Fact]
     public async Task WriteWithoutTokenIsUnauthorized()
     {
         using var client = _factory.CreateClient();
@@ -137,6 +170,28 @@ public sealed class ChannelEndpointTests : IClassFixture<WebApplicationFactory<P
         using var response = await client.PutAsync($"/api/channels/{FakeChannelService.ConcurrencyId}", JsonContent(ValidUpdateRequest()));
 
         Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetMissingChannelReturns404()
+    {
+        using var client = _factory.CreateClient();
+        client.DefaultRequestHeaders.Authorization = Bearer("historiaspaolin.channels.view");
+
+        using var response = await client.GetAsync($"/api/channels/{FakeChannelService.NotFoundId}");
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task ValidationErrorReturns400()
+    {
+        using var client = _factory.CreateClient();
+        client.DefaultRequestHeaders.Authorization = Bearer("historiaspaolin.channels.manage");
+
+        using var response = await client.PostAsync("/api/channels", JsonContent(ValidCreateRequest() with { Code = "invalid" }));
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
     private static AuthenticationHeaderValue Bearer(string permission) => new("Bearer", CreateToken(permission));
@@ -173,17 +228,22 @@ public sealed class ChannelEndpointTests : IClassFixture<WebApplicationFactory<P
     {
         public static readonly Guid ChannelId = Guid.Parse("aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa");
         public static readonly Guid ConcurrencyId = Guid.Parse("bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb");
+        public static readonly Guid NotFoundId = Guid.Parse("dddddddd-dddd-4ddd-8ddd-dddddddddddd");
 
         public Task<IReadOnlyList<ChannelSummaryDto>> ListAsync(CancellationToken cancellationToken) =>
             Task.FromResult<IReadOnlyList<ChannelSummaryDto>>([Summary()]);
 
         public Task<ChannelDetailDto> GetAsync(Guid id, CancellationToken cancellationToken) =>
-            id == ConcurrencyId ? throw new ChannelConcurrencyException() : Task.FromResult(Detail(id));
+            id == NotFoundId ? throw new ChannelNotFoundException(id) :
+            id == ConcurrencyId ? throw new ChannelConcurrencyException() :
+            Task.FromResult(Detail(id));
 
         public Task<ChannelDetailDto> GetByCodeAsync(string code, CancellationToken cancellationToken) => Task.FromResult(Detail(ChannelId));
 
         public Task<ChannelDetailDto> CreateAsync(CreateChannelRequest request, string actor, string correlationId, CancellationToken cancellationToken) =>
-            Task.FromResult(Detail(ChannelId));
+            request.Code == "invalid"
+                ? throw new ChannelValidationException(["Code is required."])
+                : Task.FromResult(Detail(ChannelId));
 
         public Task<ChannelDetailDto> UpdateAsync(Guid id, UpdateChannelRequest request, string actor, string correlationId, CancellationToken cancellationToken) =>
             id == ConcurrencyId ? throw new ChannelConcurrencyException() : Task.FromResult(Detail(id));

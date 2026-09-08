@@ -31,12 +31,12 @@ Estados permitidos: `PENDIENTE`, `EN_PROGRESO`, `BLOQUEADO`, `TERMINADO`.
 
 **Evidencia local 2026-08-13:** SQL Server compartido validado en puerto host `14333`, `HistoriasPaolinDb` creada, migracion inicial aplicada, API y Worker healthy, y `/health`, `/health/live`, `/health/ready` en `200 Healthy`. Portal Gateway enruta `/api/historiaspaolin/**` hacia `historiaspaolin-api:8080` en `portal-local-network`; smoke integrado Gateway -> HistoriasPaolin.Api validado con `PASS=7 FAIL=0 SKIP=0`.
 
-## Sprint 1 - Canales y estrategia editorial - EN_PROGRESO
+## Sprint 1 - Canales y estrategia editorial - TERMINADO
 - HP-101 Administracion de canales y marca editorial. TERMINADO.
 - HP-102 Estrategia editorial por canal, pilares, temas y restricciones. TERMINADO.
 - HP-103 EF Core SQL Server, snapshot, migraciones, indices y seeds. TERMINADO.
 - HP-104 Repositorios, indices, `rowversion` y auditoria extendida. TERMINADO.
-- HP-105 Pruebas de dominio e integracion contra SQL Server. PENDIENTE.
+- HP-105 Pruebas de dominio e integracion contra SQL Server. TERMINADO.
 
 **Evidencia HP-101 2026-08-13:** Channel y ChannelBrand implementados con seed `Historias de Paolín`, API `/api/channels`, permisos `historiaspaolin.channels.view/manage`, migracion `AddChannelManagement`, tests unitarios/integracion `28/28`, build `0 warnings / 0 errors`.
 
@@ -45,6 +45,8 @@ Estados permitidos: `PENDIENTE`, `EN_PROGRESO`, `BLOQUEADO`, `TERMINADO`.
 **Evidencia HP-103 2026-08-13:** EF Core ModelSnapshot synchronized and validated, `dotnet-ef` local 8.0.0 agregado, migracion `HP103PersistenceHardening` generada sin operaciones de modelo, orden de migraciones validado, script idempotente generado temporalmente, pending model changes `No`, tests `62/62`, build `0 warnings / 0 errors`. Aplicacion local de migraciones no ejecutada por timeout de conexion SQL Server.
 
 **Evidencia HP-104 2026-09-07:** Auditoria extendida expuesta en DTOs de detalle de canales, marcas y estrategia editorial; interceptor preserva `CreatedAtUtc/CreatedBy` en updates y sella `UpdatedAtUtc/UpdatedBy`; indices `CreatedAtUtc` agregados a tablas auditables via migracion `HP104ConcurrencyAuditHardening`; pending model changes `No`; script idempotente generado temporalmente; tests `65/65`; build `0 warnings / 0 errors`. Aplicacion local de migraciones no ejecutada por timeout de conexion SQL Server en `localhost,14333`.
+
+**Evidencia HP-105 2026-09-08:** Cobertura de dominio, API, auditoria, concurrencia y persistencia SQL Server completada. Suite general `82/82`; filtro `Category=RequiresSqlServer` descubrio y ejecuto `5/5` pruebas contra `localhost,14333` usando base aislada `HistoriasPaolinDb_IntegrationTests`; migraciones EF aplicadas en la base de integracion; latest migration `20260907201736_HP104ConcurrencyAuditHardening`; pending model changes `No`; script idempotente generado temporalmente; build `0 warnings / 0 errors`.
 
 ## Sprint 2 — Orquestador — PENDIENTE
 - HP-201 Pipeline por etapas.

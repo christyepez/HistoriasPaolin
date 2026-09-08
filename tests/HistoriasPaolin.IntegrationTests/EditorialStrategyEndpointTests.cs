@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
@@ -48,6 +49,22 @@ public sealed class EditorialStrategyEndpointTests : IClassFixture<WebApplicatio
         using var response = await client.GetAsync($"/api/editorial-strategies/{FakeEditorialStrategyService.StrategyId}");
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetStrategyReturnsAuditMetadata()
+    {
+        using var client = Client("historiaspaolin.editorial.view");
+
+        using var response = await client.GetAsync($"/api/editorial-strategies/{FakeEditorialStrategyService.StrategyId}");
+        var strategy = await response.Content.ReadFromJsonAsync<EditorialStrategyDetailDto>();
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(strategy);
+        Assert.Equal("tests", strategy!.Audit.CreatedBy);
+        Assert.Equal("tests", strategy.Audit.UpdatedBy);
+        Assert.NotEqual(default, strategy.Audit.CreatedAtUtc);
+        Assert.NotNull(strategy.Audit.UpdatedAtUtc);
     }
 
     [Fact]
@@ -160,6 +177,26 @@ public sealed class EditorialStrategyEndpointTests : IClassFixture<WebApplicatio
         Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
     }
 
+    [Fact]
+    public async Task GetMissingStrategyReturns404()
+    {
+        using var client = Client("historiaspaolin.editorial.view");
+
+        using var response = await client.GetAsync($"/api/editorial-strategies/{FakeEditorialStrategyService.NotFoundId}");
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task ValidationErrorReturns400()
+    {
+        using var client = Client("historiaspaolin.editorial.manage");
+
+        using var response = await client.PostAsync($"/api/channels/{FakeEditorialStrategyService.ChannelId}/editorial-strategies", JsonContent(ValidCreate() with { Name = "invalid" }));
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
     private HttpClient Client(string permission)
     {
         var client = _factory.CreateClient();
@@ -196,11 +233,15 @@ public sealed class EditorialStrategyEndpointTests : IClassFixture<WebApplicatio
         public static readonly Guid ChannelId = Guid.Parse("aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa");
         public static readonly Guid StrategyId = Guid.Parse("dddddddd-dddd-4ddd-8ddd-dddddddddddd");
         public static readonly Guid ConcurrencyId = Guid.Parse("eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee");
+        public static readonly Guid NotFoundId = Guid.Parse("ffffffff-ffff-4fff-8fff-ffffffffffff");
 
         public Task<IReadOnlyList<EditorialStrategySummaryDto>> ListAsync(Guid channelId, CancellationToken cancellationToken) => Task.FromResult<IReadOnlyList<EditorialStrategySummaryDto>>([new EditorialStrategySummaryDto(StrategyId, ChannelId, "Estrategia", true, 1, DateTime.UtcNow.AddDays(-1), null)]);
-        public Task<EditorialStrategyDetailDto> GetAsync(Guid id, CancellationToken cancellationToken) => id == ConcurrencyId ? throw new EditorialStrategyConcurrencyException() : Task.FromResult(Detail(id));
+        public Task<EditorialStrategyDetailDto> GetAsync(Guid id, CancellationToken cancellationToken) => id == NotFoundId ? throw new EditorialStrategyNotFoundException(id) : id == ConcurrencyId ? throw new EditorialStrategyConcurrencyException() : Task.FromResult(Detail(id));
         public Task<EditorialStrategyDetailDto> GetActiveAsync(Guid channelId, CancellationToken cancellationToken) => Task.FromResult(Detail(StrategyId));
-        public Task<EditorialStrategyDetailDto> CreateAsync(Guid channelId, CreateEditorialStrategyRequest request, string actor, string correlationId, CancellationToken cancellationToken) => Task.FromResult(Detail(StrategyId));
+        public Task<EditorialStrategyDetailDto> CreateAsync(Guid channelId, CreateEditorialStrategyRequest request, string actor, string correlationId, CancellationToken cancellationToken) =>
+            request.Name == "invalid"
+                ? throw new EditorialStrategyValidationException(["Name is required."])
+                : Task.FromResult(Detail(StrategyId));
         public Task<EditorialStrategyDetailDto> UpdateAsync(Guid id, UpdateEditorialStrategyRequest request, string actor, string correlationId, CancellationToken cancellationToken) => id == ConcurrencyId ? throw new EditorialStrategyConcurrencyException() : Task.FromResult(Detail(id));
         public Task<EditorialStrategyDetailDto> ActivateAsync(Guid id, string actor, string correlationId, CancellationToken cancellationToken) => Task.FromResult(Detail(id) with { IsActive = true });
         public Task<EditorialStrategyDetailDto> DeactivateAsync(Guid id, string actor, string correlationId, CancellationToken cancellationToken) => Task.FromResult(Detail(id) with { IsActive = false });

@@ -1,21 +1,21 @@
 # Implementation Status
 
-Updated: 2026-09-07
+Updated: 2026-09-08
 
 ## Current State
 
 | Field | Value |
 |---|---|
-| Current Sprint | Sprint 1 - Canales y estrategia editorial |
-| Last Completed Task | HP-104 - concurrency and audit hardening |
-| Current Task | Ready for HP-105 |
-| Next Task | HP-105 - Sprint 1 domain and SQL Server integration tests |
+| Current Sprint | Sprint 2 - Orquestador |
+| Last Completed Task | HP-105 - Sprint 1 domain and SQL Server integration tests |
+| Current Task | Ready for HP-201 |
+| Next Task | HP-201 - SeriesBible aggregate |
 | Foundation Status | DONE; do not re-run as pending |
 | Build Status | OK; `dotnet build HistoriasPaolin.sln --no-restore`; 0 warnings, 0 errors |
-| Test Status | OK; `dotnet test HistoriasPaolin.sln --no-build`; 65/65 |
+| Test Status | OK; `dotnet test HistoriasPaolin.sln --no-build`; 82/82 |
 | Docker Status | API healthy, Worker healthy, migrations exited 0 |
 | Portal Integration | Gateway integration completed local; integrated smoke PASS 7/0/0 |
-| SQL Status | EF migrations validated offline; local SQL connection to `localhost,14333` timed out during apply |
+| SQL Status | SQL integration tests PASS against isolated `HistoriasPaolinDb_IntegrationTests` on `localhost,14333`; primary dev DB not destroyed |
 | Open PRs | HistoriasPaolin #1 draft; PortalCorporativo #32 draft |
 
 ## Architectural Decisions
@@ -36,6 +36,6 @@ Updated: 2026-09-07
 - Full module onboarding in Portal Menu/Configuration/Security remains pending.
 - Productive IdP/OIDC remains pending; local smoke uses dev JWT only.
 - Angular Shell is not required for HP-101/HP-102.
-- `RequiresSqlServer` filter executed; no tests currently tagged.
+- `RequiresSqlServer` filter executed; 5 tests discovered and passed against SQL Server.
 - EF Core ModelSnapshot synchronized and validated through HP-104; pending model changes: No.
-- Local SQL migration apply attempted for HP-104; SQL Server connection timed out before applying.
+- HP-105 closed Sprint 1; HP-201 is READY.

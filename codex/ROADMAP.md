@@ -37,8 +37,8 @@ Status values: DONE, PARTIAL, READY, BLOCKED, DEFERRED, NOT_REQUIRED.
 | HP-102 | 1 | DONE | HP-101 | HP-103 | ChannelStrategyAgent | channel-strategy | Configuration | S | Editorial strategy persists and governs channel content rules |
 | HP-103 | 1 | DONE | HP-101,HP-102 | HP-104 | Backend Architect | sqlserver | none | M | EF ModelSnapshot synchronized; migrations/order/indexes hardened |
 | HP-104 | 1 | DONE | HP-103 | HP-105 | Backend Architect | persistence | Audit future | M | Concurrency and audit fields defined; CreatedAt indexes added |
-| HP-105 | 1 | READY | HP-104 | HP-201 | Backend Architect | testing | none | M | Channel tests cover domain/API/persistence |
-| HP-201 | 2 | BLOCKED | HP-105 | HP-202 | StoryStrategyAgent | story-bible | Configuration | M | SeriesBible aggregate exists |
+| HP-105 | 1 | DONE | HP-104 | HP-201 | Backend Architect | testing | none | M | Sprint 1 domain/API/SQL Server integration coverage completed |
+| HP-201 | 2 | READY | HP-105 | HP-202 | StoryStrategyAgent | story-bible | Configuration | M | SeriesBible aggregate exists |
 | HP-202 | 2 | BLOCKED | HP-201 | HP-203 | StoryStrategyAgent | story-bible | Configuration | M | Characters and relationships persist |
 | HP-203 | 2 | BLOCKED | HP-202 | HP-204 | StoryStrategyAgent | story-bible | Configuration | M | Narrative rules and universe metadata persist |
 | HP-204 | 2 | BLOCKED | HP-203 | HP-205 | StoryStrategyAgent | continuity-check | none | M | Continuity memory records used elements |
