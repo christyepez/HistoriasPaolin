@@ -1,0 +1,10 @@
+services:
+  historiaspaolin-migrations:
+    image: ghcr.io/christyepez/historiaspaolin-migrations@sha256:f26910dbc6fdc74e5d708ff70444ddec8c92bceba5660a4a5fcc8eb9c908226e
+    build: null
+  historiaspaolin-api:
+    image: ghcr.io/christyepez/historiaspaolin-api@sha256:7ba87067105dc20b3797631882daf44073f56d57a8e05f472594fe02b2334da8
+    build: null
+  historiaspaolin-worker:
+    image: ghcr.io/christyepez/historiaspaolin-worker@sha256:43e763555dd8662f17f43bafda6c290586562cba2066770f4518512acfb39fef
+    build: null

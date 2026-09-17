@@ -1,0 +1,96 @@
+x-historiaspaolin-env: &historiaspaolin-env
+  ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Development}
+  SQLSERVER_HOST: ${SQLSERVER_HOST:-host.docker.internal}
+  SQLSERVER_PORT: ${SQLSERVER_PORT:-1433}
+  SQLSERVER_INSTANCE: ${SQLSERVER_INSTANCE:-}
+  SQLSERVER_DATABASE: ${SQLSERVER_DATABASE:-HistoriasPaolinDb}
+  SQLSERVER_USER: ${SQLSERVER_USER:-}
+  SQLSERVER_PASSWORD: ${SQLSERVER_PASSWORD:-}
+  SQLSERVER_INTEGRATED_SECURITY: ${SQLSERVER_INTEGRATED_SECURITY:-false}
+  SQLSERVER_ENCRYPT: ${SQLSERVER_ENCRYPT:-true}
+  SQLSERVER_TRUST_SERVER_CERTIFICATE: ${SQLSERVER_TRUST_SERVER_CERTIFICATE:-true}
+  SQLSERVER_CONNECT_TIMEOUT: ${SQLSERVER_CONNECT_TIMEOUT:-30}
+  SQLSERVER_COMMAND_TIMEOUT: ${SQLSERVER_COMMAND_TIMEOUT:-60}
+  Jwt__Issuer: ${JWT_ISSUER:-portal-corporativo}
+  Jwt__Audience: ${JWT_AUDIENCE:-portal-corporativo-clients}
+  Jwt__Secret: ${JWT_SECRET:?Set JWT_SECRET in .env}
+  PORTAL_GATEWAY_BASE_URL: ${PORTAL_GATEWAY_BASE_URL:-http://api-gateway:8080}
+
+services:
+  historiaspaolin-migrations:
+    build:
+      context: .
+      dockerfile: Dockerfile.migrations
+    environment:
+      <<: *historiaspaolin-env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - portal-local-network
+    restart: "no"
+    volumes:
+      - ./production:/src/production
+      - ./prompts:/src/prompts
+      - ./secrets:/src/secrets:ro
+      - ./tokens:/src/tokens
+
+  historiaspaolin-api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    environment:
+      <<: *historiaspaolin-env
+      ASPNETCORE_URLS: http://+:8080
+    ports:
+      - "${HISTORIASPAOLIN_API_PORT:-5080}:8080"
+    depends_on:
+      historiaspaolin-migrations:
+        condition: service_completed_successfully
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - portal-local-network
+    restart: unless-stopped
+    volumes:
+      - ./production:/app/production
+      - ./prompts:/app/prompts
+      - ./secrets:/app/secrets:ro
+      - ./tokens:/app/tokens
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/health/ready"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 20s
+    mem_limit: 512m
+
+  historiaspaolin-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    environment:
+      <<: *historiaspaolin-env
+    depends_on:
+      historiaspaolin-migrations:
+        condition: service_completed_successfully
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - portal-local-network
+    restart: unless-stopped
+    volumes:
+      - ./production:/app/production
+      - ./prompts:/app/prompts
+      - ./secrets:/app/secrets:ro
+      - ./tokens:/app/tokens
+    healthcheck:
+      test: ["CMD-SHELL", "ps -ef | grep HistoriasPaolin.Worker | grep -v grep"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    mem_limit: 512m
+
+networks:
+  portal-local-network:
+    name: portal-local-network
+    driver: bridge
