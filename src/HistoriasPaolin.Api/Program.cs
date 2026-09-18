@@ -16,19 +16,53 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHistoriasPaolinInfrastructure(builder.Configuration);
 builder.Services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
 
-var jwtSecret = builder.Configuration["Jwt:Secret"] ?? "local-development-secret-change-me-32";
+var jwtAuthority = builder.Configuration["Jwt:Authority"] ?? builder.Configuration["JWT_AUTHORITY"];
+var jwtAudience = builder.Configuration["Jwt:Audience"]
+    ?? builder.Configuration["JWT_AUDIENCE"]
+    ?? "portal-corporativo-clients";
+var requireHttpsMetadataValue = builder.Configuration["Jwt:RequireHttpsMetadata"]
+    ?? builder.Configuration["JWT_REQUIRE_HTTPS_METADATA"];
+var requireHttpsMetadata = !bool.TryParse(requireHttpsMetadataValue, out var parsedRequireHttpsMetadata)
+    || parsedRequireHttpsMetadata;
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
+        if (!string.IsNullOrWhiteSpace(jwtAuthority))
+        {
+            options.Authority = jwtAuthority.Trim();
+            options.Audience = jwtAudience;
+            options.RequireHttpsMetadata = requireHttpsMetadata;
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidAudience = jwtAudience,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ClockSkew = TimeSpan.FromMinutes(1)
+            };
+            return;
+        }
+
+        var jwtSecret = builder.Configuration["Jwt:Secret"]
+            ?? builder.Configuration["JWT_SECRET"]
+            ?? (builder.Environment.IsDevelopment()
+                ? "local-development-secret-change-me-32"
+                : throw new InvalidOperationException("Configure Jwt:Authority/JWT_AUTHORITY for OIDC or provide Jwt:Secret/JWT_SECRET for local JWT mode."));
+        var jwtIssuer = builder.Configuration["Jwt:Issuer"]
+            ?? builder.Configuration["JWT_ISSUER"]
+            ?? "portal-corporativo";
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"] ?? "portal-corporativo",
-            ValidAudience = builder.Configuration["Jwt:Audience"] ?? "portal-corporativo-clients",
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret))
+            ValidIssuer = jwtIssuer,
+            ValidAudience = jwtAudience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret)),
+            ClockSkew = TimeSpan.FromMinutes(1)
         };
     });
 
